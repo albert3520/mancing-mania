@@ -1439,6 +1439,13 @@
         // Panggil sebelum deploy
         createEmergencyBackup();
         
+        // Manual update check function - bisa dipanggil setelah deploy
+        function checkForUpdates() {
+            if (window.updateManager) {
+                window.updateManager.checkForUpdates();
+            }
+        }
+
         // Keyboard shortcut untuk buka admin panel (Ctrl+Shift+A)
         document.addEventListener('keydown', function(e) {
             if (e.ctrlKey && e.shiftKey && e.key === 'A') {
@@ -1447,3 +1454,4 @@
             }
 
         });
+
