@@ -526,7 +526,7 @@
             }
         }
         
-        // Catch Fish Logic - VERSI DENGAN PROBABILITAS YANG DIMINTA
+        // Catch Fish Logic - VERSI DENGAN RATES BARU
         function catchFish() {
             const locationFish = fishData[currentLocation].fish;
             
@@ -545,38 +545,27 @@
             
             // PROBABILITAS BASE SESUAI PERMINTAAN (dalam %)
             const baseChances = {
-                'secret': 0.001,    // 1 dari 500,000 = 0.0002%
-                'mythic': 0.05,     // 1 dari 100,000 = 0.001%
-                'epic': 1,       // 1 dari 50,000 = 0.002%
-                'rare': 5,        // 1 dari 5,000 = 0.02%
-                'uncommon': 30,      // 15%
-                'common': 50,        // 70%
-                'junk': 10      // Sisa sampai 100%
+                'secret': 0.001,    // 0.001%
+                'mythic': 0.05,     // 0.05%  
+                'epic': 1,          // 1%
+                'rare': 5,          // 5%
+                'uncommon': 30,     // 30%
+                'common': 50,       // 50%
+                'junk': 13.949      // Sisa sampai 100% (100 - 0.001 - 0.05 - 1 - 5 - 30 - 50 = 13.949)
             };
             
-            // HARD CAPS - MAKSIMAL DENGAN LUCK TINGGI
-            const maxChances = {
-                'secret': 0.005,
-                'mythic': 0.01,
-                'epic': 1,
-                'rare': 5,
-                'uncommon': 30,
-                'common': 50,
-                'junk': 10
-            };
+            // Luck effect - semakin tinggi luck, semakin turun common & junk, naik rare+
+            const luckEffect = Math.min(totalLuck / 100, 3); // Maksimal 3x effect
             
-            // Luck effect - semakin tinggi luck, semakin turun common & junk
-            const luckEffect = Math.min(totalLuck / 100, 5); // Maksimal 5x dengan luck 500%
-            
-            // Adjusted chances: Luck TINGGI = Common & Junk TURUN, Rare+ NAIK
+            // Adjusted chances dengan luck
             const adjustedChances = {
-                'common': Math.max(50, baseChances.common - (luckEffect * 4)),
-                'uncommon': Math.min(maxChances.uncommon, baseChances.uncommon + (luckEffect * 1)),
-                'rare': Math.min(maxChances.rare, baseChances.rare + (luckEffect * 0.016)),
-                'epic': Math.min(maxChances.epic, baseChances.epic + (luckEffect * 0.0016)),
-                'mythic': Math.min(maxChances.mythic, baseChances.mythic + (luckEffect * 0.0008)),
-                'secret': Math.min(maxChances.secret, baseChances.secret + (luckEffect * 0.00016)),
-                'junk': Math.max(2, baseChances.junk - (luckEffect * 2))
+                'common': Math.max(40, baseChances.common - (luckEffect * 3)),
+                'uncommon': Math.min(35, baseChances.uncommon + (luckEffect * 1.5)),
+                'rare': Math.min(8, baseChances.rare + (luckEffect * 1)),
+                'epic': Math.min(2, baseChances.epic + (luckEffect * 0.3)),
+                'mythic': Math.min(0.1, baseChances.mythic + (luckEffect * 0.02)),
+                'secret': Math.min(0.005, baseChances.secret + (luckEffect * 0.001)),
+                'junk': Math.max(5, baseChances.junk - (luckEffect * 3))
             };
             
             // Normalize probabilities
@@ -1454,6 +1443,7 @@
             }
 
         });
+
 
 
 
