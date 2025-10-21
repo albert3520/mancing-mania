@@ -1,0 +1,13 @@
+{
+  "name": "mancing-mania",
+  "version": "1.0.0",
+  "description": "Game Mancing Mania",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve -s -l $PORT",
+    "build": "echo 'No build process needed for static site'"
+  },
+  "dependencies": {
+    "serve": "^14.0.0"
+  }
+}
