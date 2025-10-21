@@ -1,0 +1,48 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:  # Memungkinkan manual trigger
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
+    steps:
+    - name: 🚚 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: 🏗️ Setup Pages
+      uses: actions/configure-pages@v3
+      
+    - name: 📝 Update Version Timestamp
+      run: |
+        # Update version di script.js dengan timestamp
+        CURRENT_DATE=$(date +%Y%m%d-%H%M)
+        sed -i "s/const GAME_VERSION = '.*'/const GAME_VERSION = '2.1.$CURRENT_DATE'/" script.js
+        echo "🔄 Version updated to: 2.1.$CURRENT_DATE"
+        
+    - name: 🔍 Verify Changes
+      run: |
+        echo "=== Updated Version ==="
+        grep "GAME_VERSION" script.js
+        echo "=== Files Ready for Deployment ==="
+        ls -la
+        
+    - name: 📦 Upload artifact
+      uses: actions/upload-pages-artifact@v2
+      with:
+        path: .
+        
+    - name: 🚀 Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v2
