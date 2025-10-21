@@ -556,13 +556,13 @@
             
             // HARD CAPS - MAKSIMAL DENGAN LUCK TINGGI
             const maxChances = {
-                'secret': 0.001,     // Maks 0.001% (1 dari 100,000)
-                'mythic': 0.005,     // Maks 0.005% (1 dari 20,000)
-                'epic': 0.01,        // Maks 0.01% (1 dari 10,000)
-                'rare': 0.1,         // Maks 0.1% (1 dari 1,000)
-                'uncommon': 20,      // Maks 20%
-                'common': 75,        // Maks 75%
-                'junk': 5            // Maks 5%
+                'secret': 0.005,
+                'mythic': 0.01,
+                'epic': 1,
+                'rare': 5,
+                'uncommon': 30,
+                'common': 50,
+                'junk': 10
             };
             
             // Luck effect - semakin tinggi luck, semakin turun common & junk
@@ -1445,4 +1445,5 @@
                 e.preventDefault();
                 openAdminModal();
             }
+
         });
