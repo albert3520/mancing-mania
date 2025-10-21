@@ -420,159 +420,177 @@
     <script src="script.js"></script>
 
     <script>
-    // Auto Update System - Hot Reload
+    // Update System - Manual Check Only
     class GameUpdater {
         constructor() {
-            this.currentVersion = '2.0.0'; // Update versi ini setiap deploy
-            this.updateChecked = false;
+            this.lastUpdateCheck = 0;
+            this.updateCheckInterval = 300000; // 5 menit
             this.init();
         }
-
+    
         init() {
-            // Check for updates every 2 minutes
-            setInterval(() => this.checkForUpdates(), 120000);
+            // Check for updates setiap 5 menit, tapi hanya jika game tidak sedang aktif memancing
+            setInterval(() => this.safeUpdateCheck(), this.updateCheckInterval);
             
-            // Also check when tab becomes visible
+            // Juga check ketika tab menjadi visible (user kembali ke game)
             document.addEventListener('visibilitychange', () => {
-                if (!document.hidden) this.checkForUpdates();
+                if (!document.hidden) this.safeUpdateCheck();
             });
         }
-
-        async checkForUpdates() {
-            if (this.updateChecked) return;
+    
+        safeUpdateCheck() {
+            // Jangan check update jika sedang auto fishing
+            if (window.isAutoFishing) {
+                console.log('🔄 Skip update check: Auto fishing aktif');
+                return;
+            }
             
+            // Jangan check terlalu sering
+            const now = Date.now();
+            if (now - this.lastUpdateCheck < 60000) { // Minimal 1 menit antara check
+                return;
+            }
+            
+            this.lastUpdateCheck = now;
+            this.checkForUpdates();
+        }
+    
+        async checkForUpdates() {
             try {
+                console.log('🔍 Checking for updates...');
                 const response = await fetch(`/?v=${Date.now()}`);
                 const html = await response.text();
+                
+                // Simple check: jika response berbeda dari current page
+                const currentScripts = Array.from(document.querySelectorAll('script[src]'))
+                    .map(script => script.src).sort();
+                
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(html, 'text/html');
-                const scripts = doc.querySelectorAll('script[src]');
+                const newScripts = Array.from(doc.querySelectorAll('script[src]'))
+                    .map(script => script.src).sort();
                 
-                let needsUpdate = false;
+                // Check jika ada perubahan script
+                const scriptsChanged = JSON.stringify(currentScripts) !== JSON.stringify(newScripts);
                 
-                // Check if any script has changed
-                for (let script of scripts) {
-                    const currentScript = document.querySelector(`script[src="${script.src}"]`);
-                    if (!currentScript) {
-                        needsUpdate = true;
-                        break;
-                    }
-                }
-                
-                if (needsUpdate) {
-                    this.notifyUpdateAvailable();
+                if (scriptsChanged) {
+                    console.log('🔄 Update detected!');
+                    this.showUpdateNotification();
+                } else {
+                    console.log('✅ No updates found');
                 }
                 
             } catch (error) {
-                console.log('Update check failed:', error);
+                console.log('❌ Update check failed:', error);
             }
-            
-            this.updateChecked = true;
-            setTimeout(() => { this.updateChecked = false; }, 60000);
         }
-
-        notifyUpdateAvailable() {
-            // Create non-intrusive update notification
+    
+        showUpdateNotification() {
+            // Create non-intrusive notification di pojok
             const notification = document.createElement('div');
             notification.innerHTML = `
                 <div style="
                     position: fixed;
-                    top: 20px;
+                    bottom: 20px;
                     right: 20px;
                     background: linear-gradient(145deg, #4ecdc4, #44a08d);
                     color: white;
-                    padding: 15px 20px;
+                    padding: 12px 16px;
                     border-radius: 10px;
                     border: 2px solid #ffd700;
-                    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-                    z-index: 10000;
-                    max-width: 300px;
-                    animation: slideIn 0.5s ease-out;
+                    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+                    z-index: 9999;
+                    max-width: 280px;
+                    font-size: 0.9rem;
+                    animation: slideUp 0.5s ease-out;
                 ">
-                    <strong>🔄 Update Tersedia!</strong>
-                    <p style="margin: 8px 0; font-size: 0.9rem;">
-                        Versi baru sudah ready. Game akan reload otomatis dalam:
-                    </p>
-                    <div style="text-align: center; font-size: 1.2rem; font-weight: bold;">
-                        <span id="updateCountdown">30</span> detik
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px;">
+                        <span style="font-size: 1.2rem;">🔄</span>
+                        <strong>Update Tersedia!</strong>
                     </div>
-                    <div style="display: flex; gap: 10px; margin-top: 10px;">
-                        <button onclick="window.updateManager.reloadNow()" style="
+                    <p style="margin: 5px 0; font-size: 0.8rem; opacity: 0.9;">
+                        Versi baru sudah siap. Reload game untuk mendapatkan fitur terbaru.
+                    </p>
+                    <div style="display: flex; gap: 8px; margin-top: 8px;">
+                        <button onclick="window.updateManager.reloadGame()" style="
                             background: #ffd700; 
                             border: none; 
-                            padding: 5px 10px; 
+                            padding: 6px 12px; 
                             border-radius: 5px; 
                             cursor: pointer;
+                            font-size: 0.8rem;
+                            font-weight: bold;
+                            color: #333;
                             flex: 1;
                         ">Reload Sekarang</button>
-                        <button onclick="window.updateManager.postponeUpdate()" style="
+                        <button onclick="this.parentElement.parentElement.remove()" style="
                             background: rgba(255,255,255,0.2); 
                             border: 1px solid white; 
                             color: white;
-                            padding: 5px 10px; 
+                            padding: 6px 12px; 
                             border-radius: 5px; 
                             cursor: pointer;
+                            font-size: 0.8rem;
                             flex: 1;
-                        ">Nanti Saja</button>
+                        ">Nanti</button>
                     </div>
                 </div>
                 <style>
-                    @keyframes slideIn {
-                        from { transform: translateX(100%); opacity: 0; }
-                        to { transform: translateX(0); opacity: 1; }
+                    @keyframes slideUp {
+                        from { 
+                            transform: translateY(100px); 
+                            opacity: 0; 
+                        }
+                        to { 
+                            transform: translateY(0); 
+                            opacity: 1; 
+                        }
                     }
                 </style>
             `;
             
-            document.body.appendChild(notification);
-            this.startCountdown();
-        }
-
-        startCountdown() {
-            let countdown = 30;
-            const countdownElement = document.getElementById('updateCountdown');
-            const countdownInterval = setInterval(() => {
-                countdown--;
-                if (countdownElement) {
-                    countdownElement.textContent = countdown;
-                }
-                
-                if (countdown <= 0) {
-                    clearInterval(countdownInterval);
-                    this.reloadNow();
-                }
-            }, 1000);
+            // Hapus notifikasi sebelumnya jika ada
+            const existingNotification = document.querySelector('div[style*="position: fixed"][style*="bottom: 20px"]');
+            if (existingNotification) {
+                existingNotification.remove();
+            }
             
-            this.countdownInterval = countdownInterval;
+            document.body.appendChild(notification);
+            
+            // Auto remove setelah 30 detik
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 30000);
         }
-
-        reloadNow() {
+    
+        reloadGame() {
             // Save game sebelum reload
             if (window.saveGame) {
                 window.saveGame();
+                console.log('💾 Game saved before reload');
             }
             
-            // Force reload tanpa cache
-            window.location.reload(true);
-        }
-
-        postponeUpdate() {
-            // Hapus notifikasi
-            const notification = document.querySelector('div[style*="position: fixed"][style*="top: 20px"]');
-            if (notification) notification.remove();
-            
-            if (this.countdownInterval) {
-                clearInterval(this.countdownInterval);
-            }
-            
-            // Ingatkan lagi dalam 5 menit
-            setTimeout(() => { this.updateChecked = false; }, 300000);
+            // Beri jeda sebentar untuk memastikan save selesai
+            setTimeout(() => {
+                // Force reload tanpa cache
+                window.location.reload();
+            }, 500);
         }
     }
-
+    
     // Initialize update manager
     window.updateManager = new GameUpdater();
+    
+    // Tambahkan juga manual check function untuk dipanggil setelah deploy
+    window.checkForGameUpdates = function() {
+        window.updateManager.checkForUpdates();
+    };
+    
+    console.log('🔄 Update system initialized - Manual notifications only');
     </script>
 
 </body>
+
 </html>
