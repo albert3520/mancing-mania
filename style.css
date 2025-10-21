@@ -1,0 +1,1253 @@
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1a2a6c, #2a3a7c); /* Blue gradient original */
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .game-container {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            padding: 10px;
+            /* Hapus background gray, kembali transparan */
+        }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.5); /* Kembali ke semi-transparent */
+            border-radius: 15px;
+            margin-bottom: 15px;
+            border: 3px solid #ffd700;
+        }
+
+        /* Kembalikan modal ke warna original */
+        .shop-content, .fish-list-content {
+            background: linear-gradient(145deg, #2c2c54, #40407a); /* Original purple gradient */
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 600px;
+            width: 95%;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 3px solid #ffd700;
+        }
+
+        .inventory {
+            background: rgba(0, 0, 0, 0.3); /* Kembali ke original */
+            padding: 20px;
+            border-radius: 15px;
+            margin: 15px 0;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .result-display {
+            background: rgba(255, 255, 255, 0.1); /* Kembali ke original */
+            padding: 20px;
+            border-radius: 15px;
+            margin: 15px 0;
+            text-align: center;
+            font-size: 1.2rem;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+        }
+
+        /* Kembalikan shop items ke original */
+        .shop-item {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #444;
+            padding: 15px;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+        }
+
+        .shop-item:hover {
+            border-color: #ffd700;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .shop-item.owned {
+            background: rgba(78, 205, 196, 0.2);
+            border-color: #4ecdc4;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .shop-item.owned:hover {
+            transform: none;
+            border-color: #4ecdc4;
+            box-shadow: none;
+        }
+
+        .shop-item.current-rod {
+            background: rgba(255, 215, 0, 0.3);
+            border-color: #ffd700;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        .owned-badge {
+            color: #4ecdc4;
+            font-weight: bold;
+            float: right;
+            font-size: 0.9rem;
+        }
+
+        .current-badge {
+            color: #ffd700;
+            font-weight: bold;
+            float: right;
+            font-size: 0.9rem;
+        }
+
+        /* Kembalikan inventory items ke original */
+        .inventory-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            flex: 1;
+            min-width: 120px;
+            text-align: center;
+            position: relative;
+        }
+
+        /* Kembalikan location buttons ke original */
+        .location-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #444;
+            padding: 10px 15px;
+            border-radius: 20px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 120px;
+            font-size: 0.9rem;
+        }
+
+        .location-btn:not(.locked):hover {
+            border-color: #ffd700;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            background: rgba(255, 215, 0, 0.1);
+        }
+    
+        .stats {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 10px 15px;
+            border-radius: 15px;
+            border: 2px solid rgba(255, 215, 0, 0.4);
+            font-size: 0.9rem;
+            min-width: 80px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+            border-color: rgba(255, 215, 0, 0.7);
+        }
+
+        /* Tambahkan style untuk emoji di stats */
+        .stat-item::before {
+            font-size: 1.1rem;
+            margin-right: 5px;
+        }
+
+        /* Optional: Berikan background berbeda untuk setiap stat */
+        .stat-item:nth-child(1) { /* Gold */
+            background: rgba(255, 215, 0, 0.2);
+        }
+        .stat-item:nth-child(2) { /* Rod */
+            background: rgba(78, 205, 196, 0.2);
+        }
+        .stat-item:nth-child(3) { /* Fish */
+            background: rgba(255, 107, 107, 0.2);
+        }
+        .stat-item:nth-child(4) { /* Speed */
+            background: rgba(147, 112, 219, 0.2);
+        }
+        .stat-item:nth-child(5) { /* Luck */
+            background: rgba(76, 175, 80, 0.2);
+        }
+
+        /* Game world kembali ke original */
+        .game-world {
+            position: relative;
+            height: 350px;
+            margin: 15px 0;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 3px solid #ffd700;
+            /* Hapus background gray */
+        }
+
+        /* Active boosters kembali ke original */
+        .booster-item {
+            background: rgba(255, 215, 0, 0.2);
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid #ffd700;
+            font-size: 0.8rem;
+        }
+        
+        /* Backgrounds dengan suasana Indonesia */
+        .location-background {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transition: opacity 0.8s ease;
+            opacity: 0;
+        }
+        
+        .active-bg {
+            opacity: 1;
+        }
+        
+        /* Backgrounds dengan suasana Indonesia - AIR DI BAWAH */
+        .river-bg {
+            background: linear-gradient(to bottom, #1E90FF, #4682B4, #1E90FF);
+        }
+
+        .river-bg::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 200px; /* Tinggi air diperbesar */
+            background: linear-gradient(to top, #1E90FF, #00BFFF);
+            border-radius: 50% 50% 0 0;
+        }
+
+        .river-stones {
+            bottom: 120px;
+            width: 100%;
+            text-align: center;
+            font-size: 8rem;
+        }
+
+        .river-stones::before {
+            content: '🪨🪨🪨';
+        }
+
+        .palm-tree {
+            position: absolute;
+            bottom: 205px; /* Disesuaikan dengan tinggi air baru */
+            left: 20px;
+            text-align: left;
+            font-size: 10rem;
+        }
+
+        /* Rawa dengan Pohon Beringin */
+        .swamp-bg {
+            background: linear-gradient(to bottom, #228B22, #32CD32, #228B22);
+        }
+
+        .swamp-bg::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(to top, #556B2F, #6B8E23);
+            border-radius: 50% 50% 0 0;
+        }
+
+        .banyan-tree {
+            position: absolute;
+            bottom: 205px;
+            right: 50px;
+            font-size: 4rem;
+        }
+
+        .lily-pads {
+            position: absolute;
+            bottom: 120px;
+            left: 100px;
+            font-size: 3rem;
+        }
+
+        .lily-pads::before {
+            content: '🪷';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
+
+        /* Kawah Gunung Berapi dengan Lava */
+        .volcano-bg {
+            background: linear-gradient(to bottom, #8B0000, #A52A2A, #8B0000);
+        }
+
+        .volcano-bg::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(to top, #FF4500, #FF0000, #FF8C00);
+            border-radius: 50% 50% 0 0;
+            animation: lavaFlow 3s ease-in-out infinite;
+        }
+
+        @keyframes lavaFlow {
+            0%, 100% { 
+                background: linear-gradient(to top, #FF4500, #FF0000, #FF8C00);
+                box-shadow: 0 0 20px rgba(255, 69, 0, 0.5);
+            }
+            50% { 
+                background: linear-gradient(to top, #FF0000, #FF4500, #FF6347);
+                box-shadow: 0 0 30px rgba(255, 0, 0, 0.7);
+            }
+        }
+
+        .volcano {
+            position: absolute;
+            bottom: 205px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 150px;
+            background: linear-gradient(to bottom, #8B0000, #A52A2A);
+            border-radius: 50% 50% 0 0;
+        }
+
+        .lava {
+            position: absolute;
+            bottom: 205px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 30px;
+            background: linear-gradient(to bottom, #FF4500, #FF0000);
+            border-radius: 50%;
+            animation: lavaGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes lavaGlow {
+            0%, 100% { 
+                opacity: 0.7; 
+                box-shadow: 0 0 15px #FF4500;
+            }
+            50% { 
+                opacity: 1; 
+                box-shadow: 0 0 25px #FF0000;
+            }
+        }
+
+        /* Laut dengan Pohon Kelapa */
+        .ocean-bg {
+            background: linear-gradient(to bottom, #000080, #1E90FF, #000080);
+        }
+
+        .ocean-bg::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(to top, #1E90FF, #00BFFF, #87CEEB);
+            border-radius: 50% 50% 0 0;
+            animation: waveAnimation 4s ease-in-out infinite;
+        }
+
+        @keyframes waveAnimation {
+            0%, 100% { 
+                background: linear-gradient(to top, #1E90FF, #00BFFF, #87CEEB);
+                transform: translateY(0px);
+            }
+            50% { 
+                background: linear-gradient(to top, #00BFFF, #1E90FF, #4682B4);
+                transform: translateY(-5px);
+            }
+        }
+
+        .palm-trees {
+            position: absolute;
+            bottom: 205px;
+            left: 30px;
+            font-size: 10rem;
+        }
+
+        .palm-trees::before {
+            content: '🌴🌴🌴';
+        }
+
+        .waves {
+            position: absolute;
+            bottom: 120px;
+            width: 100%;
+            text-align: center;
+            font-size: 4rem;
+            animation: waveMove 3s ease-in-out infinite;
+        }
+
+        @keyframes waveMove {
+            0%, 100% { transform: translateX(0px); }
+            50% { transform: translateX(10px); }
+        }
+
+        /* Danau dengan Pegunungan */
+        .lake-bg {
+            background: linear-gradient(to bottom, #4682B4, #87CEEB, #4682B4);
+        }
+
+        .lake-bg::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(to top, #87CEEB, #B0E0E6, #E0FFFF);
+            border-radius: 50% 50% 0 0;
+            animation: lakeShimmer 4s ease-in-out infinite;
+        }
+
+        @keyframes lakeShimmer {
+            0%, 100% { 
+                background: linear-gradient(to top, #87CEEB, #B0E0E6, #E0FFFF);
+                opacity: 0.9;
+            }
+            50% { 
+                background: linear-gradient(to top, #B0E0E6, #87CEEB, #ADD8E6);
+                opacity: 1;
+            }
+        }
+
+        .lake-reflection {
+            position: absolute;
+            bottom: 70px !important;
+            width: 100%;
+            text-align: center;
+            font-size: 4rem;
+            animation: lakeShimmer 4s ease-in-out infinite;
+        }
+
+        /* Tambahkan ini */
+        .lake-reflection::before {
+            content: '✨ ✨ ✨ ✨';
+        }
+        
+        .mountains {
+            position: absolute;
+            bottom: 180px;
+            width: 100%;
+            text-align: center;
+            font-size: 20rem;
+        }
+
+        .mountains::before {
+            content: '🗻🗻';
+        }
+
+        .lake-reflection {
+            position: absolute;
+            bottom: 215px;
+            width: 100%;
+            text-align: center;
+            font-size: 2rem;
+            animation: reflectionShimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes reflectionShimmer {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        /* Hutan dengan Pohon Rindang */
+        .forest-bg {
+            background: linear-gradient(to bottom, #228B22, #32CD32, #228B22);
+        }
+
+        .forest-bg::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(to top, #8FBC8F, #98FB98, #90EE90);
+            border-radius: 50% 50% 0 0;
+        }
+
+        .forest-trees {
+            position: absolute;
+            bottom: 240px;
+            left: 30px;
+            font-size: 10rem;
+        }
+
+        .forest-trees::before {
+            content: '🌲🌲🌲';
+        }
+
+        .mushrooms {
+            position: absolute;
+            bottom: 215px;
+            right: 100px;
+            font-size: 5rem;
+        }
+
+        .mushrooms::before {
+            content: '🪵';
+        }
+
+        /* Improved Fisherman Character - Baju Hijau */
+        .fisherman {
+            position: absolute;
+            bottom: 205px; /* Disesuaikan dengan tinggi air baru */
+            left: 100px;
+            width: 100px;
+            height: 140px;
+            transition: all 0.5s ease;
+            z-index: 10;
+            transform-origin: bottom center;
+        }
+        
+        .fisherman-body {
+            position: absolute;
+            width: 50px;
+            height: 70px;
+            background: linear-gradient(to bottom, #228B22, #32CD32);
+            border-radius: 25px 25px 0 0;
+            bottom: 0;
+            left: 25px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.3);
+        }
+        
+        .fisherman-head {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(to bottom, #FFD700, #FFA500);
+            border-radius: 50%;
+            bottom: 70px;
+            left: 30px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+        
+        /* Fishing Rod yang Lebih Realistis - Tanpa Tali */
+        .fishing-rod {
+            position: absolute;
+            width: 120px;
+            height: 4px;
+            background: linear-gradient(to right, #8B4513, #D2691E, #8B4513);
+            transform-origin: 20px center;
+            transform: rotate(-45deg);
+            bottom: 50px;
+            left: 30px;
+            transition: all 0.3s ease;
+            z-index: 5;
+            border-radius: 2px;
+        }
+        
+        /* Animasi Umpan */
+        .bait-animation {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #FFD700;
+            border-radius: 50%;
+            bottom: 48px;
+            left: 120px;
+            opacity: 0;
+            z-index: 4;
+        }
+        
+        .fishing .bait-animation {
+            animation: baitThrow 0.5s ease-out forwards, baitBob 2s ease-in-out 0.5s infinite;
+        }
+        
+        @keyframes baitThrow {
+            0% { transform: translate(0, 0) scale(1); opacity: 1; }
+            100% { transform: translate(80px, 150px) scale(0.8); opacity: 1; }
+        }
+        
+        @keyframes baitBob {
+            0%, 100% { transform: translate(80px, 150px) scale(0.8); }
+            50% { transform: translate(80px, 155px) scale(0.8); }
+        }
+        
+        /* Animations */
+        .fishing .fishing-rod {
+            animation: rodCast 2s ease-in-out infinite;
+        }
+        
+        .walking .fisherman {
+            animation: walk 0.6s ease-in-out infinite;
+        }
+        
+        .auto-fishing .fisherman {
+            animation: autoFish 2s ease-in-out infinite;
+        }
+        
+        @keyframes walk {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            25% { transform: translateY(-5px) rotate(-2deg); }
+            50% { transform: translateY(0px) rotate(0deg); }
+            75% { transform: translateY(-3px) rotate(2deg); }
+        }
+        
+        @keyframes rodCast {
+            0%, 100% { transform: rotate(-45deg) translateY(0px); }
+            25% { transform: rotate(-50deg) translateY(-2px); }
+            50% { transform: rotate(-55deg) translateY(0px); }
+            75% { transform: rotate(-40deg) translateY(2px); }
+        }
+        
+        @keyframes autoFish {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        /* Fish Animation - Ikan keluar dari air ke arah pemain */
+        .fish-caught {
+            position: absolute;
+            font-size: 2.5rem;
+            animation: fishJump 1.5s ease-out;
+            z-index: 5;
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.5));
+        }
+        
+        @keyframes fishJump {
+            0% { transform: translate(80px, 150px) scale(0) rotate(0deg); opacity: 0; }
+            30% { transform: translate(40px, 100px) scale(1.3) rotate(-10deg); opacity: 1; }
+            70% { transform: translate(20px, 50px) scale(1.1) rotate(10deg); opacity: 1; }
+            100% { transform: translate(-20px, -20px) scale(1) rotate(0deg); opacity: 0; }
+        }
+        
+        .result-display {
+            white-space: pre; /* atau normal */
+        }
+        
+        /* Controls */
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+        
+        .control-btn {
+            background: linear-gradient(145deg, #ff6b6b, #ee5a24);
+            border: none;
+            padding: 12px 20px;
+            font-size: 1rem;
+            color: white;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            min-width: 140px;
+            border: 2px solid #ffd700;
+        }
+        
+        .control-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+        
+        .control-btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .control-btn.active {
+            background: linear-gradient(145deg, #4ecdc4, #44a08d);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        .location-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #444;
+            padding: 10px 15px;
+            border-radius: 20px;
+            color: white;
+            cursor: pointer; /* Default cursor untuk semua tombol */
+            transition: all 0.3s;
+            min-width: 120px;
+            font-size: 0.9rem;
+        }
+
+        .location-btn.active {
+            border-color: #4ecdc4;
+            background: rgba(78, 205, 196, 0.3);
+            transform: scale(1.05);
+        }
+
+        .location-btn.locked {
+            opacity: 0.5;
+            background: rgba(255, 0, 0, 0.2);
+            border-color: #ff6b6b;
+            /* PERBAIKAN: Tetap gunakan cursor pointer untuk locked */
+            cursor: pointer;
+        }
+
+        /* Hover effect hanya untuk tombol yang tidak locked */
+        .location-btn:not(.locked):hover {
+            border-color: #ffd700;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        /* PERBAIKAN: Untuk tombol locked, beri hover effect yang berbeda */
+        .location-btn.locked:hover {
+            cursor: pointer;
+            border-color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.3);
+            transform: translateY(0px); /* Tidak ada lift effect */
+            box-shadow: 0 2px 8px rgba(255, 0, 0, 0.3);
+        }
+
+        .location-btn.locked span {
+            color: #ffd700 !important;
+            font-weight: bold;
+        }
+        
+        /* Progress */
+        .fishing-progress {
+            width: 100%;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            margin: 15px 0;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #4ecdc4, #44a08d);
+            width: 0%;
+            transition: width 0.1s;
+            border-radius: 6px;
+        }
+        
+        /* Results & Shop */
+        .result-display {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 15px 0;
+            text-align: center;
+            font-size: 1.2rem;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+        }
+        
+        .shop-modal, .fish-list-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .shop-modal.active, .fish-list-modal.active {
+            display: flex;
+        }
+        
+        .shop-content, .fish-list-content {
+            background: linear-gradient(145deg, #2c2c54, #40407a);
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 600px;
+            width: 95%;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 3px solid #ffd700;
+        }
+        
+        .shop-category, .fish-list-category {
+            margin: 20px 0;
+        }
+        
+        .shop-category h3, .fish-list-category h3 {
+            color: #ffd700;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #ffd700;
+            padding-bottom: 5px;
+        }
+        
+        .shop-items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 10px;
+        }
+        
+        .shop-item {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #444;
+            padding: 15px;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+        }
+        
+        .shop-item:hover {
+            border-color: #ffd700;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .shop-item:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .item-rarity {
+            font-size: 0.8rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-right: 5px;
+        }
+        
+        .rarity-common { background: #666; }
+        .rarity-uncommon { background: #4ECDC4; }
+        .rarity-rare { background: #FFD700; color: black; }
+        .rarity-epic { background: #FF6B6B; }
+        .rarity-mythic { background: #FF00FF; }
+        .rarity-secret { background: linear-gradient(45deg, #FF0000, #FFD700, #00FF00, #00FFFF, #0000FF); }
+        .rarity-junk { background: #8B4513; }
+
+        .item-price {
+            color: #ffd700;
+            font-weight: bold;
+            float: right;
+        }
+        
+        .item-stats {
+            font-size: 0.8rem;
+            color: #4ecdc4;
+            margin-top: 5px;
+        }
+        
+        /* Inventory */
+        .inventory {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 15px 0;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+        }
+        
+        .inventory-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        
+        .inventory-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            flex: 1;
+            min-width: 120px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .inventory-item.locked {
+            background: rgba(78, 205, 196, 0.2);
+            border-color: #4ecdc4;
+        }
+        
+        .lock-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .active-boosters {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .booster-item {
+            background: rgba(255, 215, 0, 0.2);
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid #ffd700;
+            font-size: 0.8rem;
+        }
+        
+        /* Fish List */
+        .fish-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+        }
+        
+        .fish-item {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .fish-emoji {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+        
+        .fish-rarity {
+            font-size: 0.8rem;
+            padding: 2px 6px;
+            border-radius: 8px;
+            margin-top: 5px;
+        }
+    
+        /* Admin Modal */
+        .admin-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .admin-modal.active {
+            display: flex;
+        }
+
+        .admin-content {
+            background: linear-gradient(145deg, #1a1a2e, #16213e);
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 95%;
+            border: 3px solid #ff0000;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.5);
+        }
+
+        .admin-header {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #ff0000;
+            font-size: 1.5rem;
+        }
+
+        .admin-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .admin-btn {
+            background: linear-gradient(145deg, #ff0000, #cc0000);
+            border: none;
+            padding: 15px;
+            font-size: 1rem;
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid #ff6b6b;
+        }
+
+        .admin-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.4);
+        }
+
+        .admin-input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .admin-input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #ff0000;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+        }
+
+        .admin-input::placeholder {
+            color: #ccc;
+        }
+
+        /* Fish Selector Styles */
+        .fish-selector-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .fish-selection-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 10px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .fish-selection-item {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #444;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .fish-selection-item:hover {
+            border-color: #4ECDC4;
+            transform: translateY(-2px);
+        }
+
+        .fish-selection-item.selected {
+            border-color: #ffd700;
+            background: rgba(255, 215, 0, 0.2);
+            transform: scale(1.05);
+        }
+
+        .fish-selector-emoji {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+
+        .fish-selector-name {
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+
+        .fish-selector-price {
+            color: #ffd700;
+            font-size: 0.8rem;
+        }
+
+        .fish-selector-rarity {
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 8px;
+            margin-top: 3px;
+        }
+        
+        .secret-code {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            color: #ffd700;
+            cursor: pointer;
+            z-index: 100;
+        }
+
+        /* Settings Modal */
+        .settings-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .settings-modal.active {
+            display: flex;
+        }
+
+        .settings-content {
+            background: linear-gradient(145deg, #2c2c54, #40407a);
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 95%;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 3px solid #4ecdc4;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .settings-header {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #4ecdc4;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border-bottom: 2px solid #4ecdc4;
+            padding-bottom: 10px;
+        }
+
+        .settings-section {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .settings-section h3 {
+            color: #ffd700;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .settings-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .settings-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #444;
+            padding: 15px;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .settings-btn:hover {
+            border-color: #4ecdc4;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .settings-btn span {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .reset-btn {
+            background: rgba(255, 107, 107, 0.2);
+            border-color: #ff6b6b;
+        }
+
+        .reset-btn:hover {
+            border-color: #ff0000;
+            background: rgba(255, 107, 107, 0.3);
+        }
+
+        .info-text {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            line-height: 1.5;
+        }
+
+        .info-text p {
+            margin-bottom: 8px;
+        }
+
+        /* Game Management Section */
+        .game-management {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 15px;
+            margin: 15px 0;
+            border: 2px solid rgba(78, 205, 196, 0.3);
+            text-align: center;
+        }
+
+        .management-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .management-btn {
+            background: linear-gradient(145deg, #4ecdc4, #44a08d);
+            border: none;
+            padding: 10px 15px;
+            font-size: 0.9rem;
+            color: white;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            border: 2px solid rgba(255, 215, 0, 0.5);
+            min-width: 120px;
+        }
+
+        .management-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            background: linear-gradient(145deg, #44a08d, #4ecdc4);
+        }
+
+        .save-status {
+            font-size: 0.8rem;
+            color: #4ecdc4;
+            opacity: 0.8;
+        }
