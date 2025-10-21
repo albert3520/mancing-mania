@@ -545,13 +545,13 @@
             
             // PROBABILITAS BASE SESUAI PERMINTAAN (dalam %)
             const baseChances = {
-                'secret': 0.0002,    // 1 dari 500,000 = 0.0002%
-                'mythic': 0.001,     // 1 dari 100,000 = 0.001%
-                'epic': 0.002,       // 1 dari 50,000 = 0.002%
-                'rare': 0.02,        // 1 dari 5,000 = 0.02%
-                'uncommon': 15,      // 15%
-                'common': 70,        // 70%
-                'junk': 14.9768      // Sisa sampai 100%
+                'secret': 0.001,    // 1 dari 500,000 = 0.0002%
+                'mythic': 0.05,     // 1 dari 100,000 = 0.001%
+                'epic': 1,       // 1 dari 50,000 = 0.002%
+                'rare': 5,        // 1 dari 5,000 = 0.02%
+                'uncommon': 30,      // 15%
+                'common': 50,        // 70%
+                'junk': 10      // Sisa sampai 100%
             };
             
             // HARD CAPS - MAKSIMAL DENGAN LUCK TINGGI
@@ -1454,6 +1454,7 @@
             }
 
         });
+
 
 
 
