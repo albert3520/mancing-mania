@@ -13,7 +13,7 @@
         let ownedRods = ['rod1'];
 
         // ==================== VERSION MANAGEMENT ====================
-        const GAME_VERSION = '1.0'; // UPDATE INI SETIAP DEPLOY
+        const GAME_VERSION = '1.0.INITIAL'; // UPDATE INI SETIAP DEPLOY
 
         function ensureVersionCompatibility() {
             console.log('🔧 Checking version compatibility...');
@@ -1454,4 +1454,5 @@
             }
 
         });
+
 
