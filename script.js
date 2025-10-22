@@ -287,7 +287,7 @@
                     { name: "Batu", rarity: "common", price: 200, emoji: "🪨" },
                     { name: "Batu Magma", rarity: "uncommon", price: 500, emoji: "🔥" },
                     { name: "Kepiting Lava", rarity: "rare", price: 1000, emoji: "🦀" },
-                    { name: "Cacing Pompeii", rarity: "epic", price: 1500, emoji: "🪱" },                        
+                    { name: "Cacing Api", rarity: "epic", price: 1500, emoji: "🪱" },                        
                     { name: "Batu Moai", rarity: "mythic", price: 5000, emoji: "🗿" },
                     { name: "Phoenix", rarity: "secret", price: 30000, emoji: "🐦" }
                 ]
@@ -1444,6 +1444,7 @@
             }
 
         });
+
 
 
 
