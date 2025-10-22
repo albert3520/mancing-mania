@@ -243,7 +243,7 @@
                     { name: "Mujair", rarity: "common", price: 200, emoji: "🐠" },
                     { name: "Jamur Air", rarity: "uncommon", price: 300, emoji: "🍄" },
                     { name: "Kodok", rarity: "rare", price: 500, emoji: "🐸" },
-                    { name: "Kura-Kura", rarity: "epic", price: 1200, emoji: "🐢" },
+                    { name: "Kura-Kura", rarity: "epic", price: 1000, emoji: "🐢" },
                     { name: "Arwana", rarity: "mythic", price: 2000, emoji: "🐉" },
                     { name: "Kecoa", rarity: "junk", price: 50, emoji: "🪳" },
                     { name: "Tai", rarity: "junk", price: 10, emoji: "💩" }
@@ -287,6 +287,7 @@
                     { name: "Batu", rarity: "common", price: 200, emoji: "🪨" },
                     { name: "Batu Magma", rarity: "uncommon", price: 500, emoji: "🔥" },
                     { name: "Kepiting Lava", rarity: "rare", price: 1000, emoji: "🦀" },
+                    { name: "Cacing Pompeii", rarity: "epic", price: 1500, emoji: "🪱" },                        
                     { name: "Batu Moai", rarity: "mythic", price: 5000, emoji: "🗿" },
                     { name: "Phoenix", rarity: "secret", price: 30000, emoji: "🐦" }
                 ]
@@ -300,7 +301,7 @@
                     { name: "Serangga Air", rarity: "uncommon", price: 500, emoji: "🪲" },
                     { name: "Tikus Hutan", rarity: "rare", price: 600, emoji: "🐀" },
                     { name: "Ular Air", rarity: "rare", price: 600, emoji: "🐍" },                    
-                    { name: "Kura-Kura", rarity: "epic", price: 1200, emoji: "🐢" },
+                    { name: "Kura-Kura", rarity: "epic", price: 1000, emoji: "🐢" },
                     { name: "Buaya", rarity: "mythic", price: 2500, emoji: "🐊" },                    
                     { name: "Loch Ness", rarity: "secret", price: 30000, emoji: "🦕" },
                     { name: "Unicorn", rarity: "secret", price: 50000, emoji: "🦄" },
@@ -1443,6 +1444,7 @@
             }
 
         });
+
 
 
 
