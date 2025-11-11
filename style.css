@@ -1,0 +1,2418 @@
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1a2a6c, #2a3a7c); /* Blue gradient original */
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .game-container {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            padding: 10px;
+            /* Hapus background gray, kembali transparan */
+        }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.5); /* Kembali ke semi-transparent */
+            border-radius: 15px;
+            margin-bottom: 15px;
+            border: 3px solid #ffd700;
+        }
+
+        /* ======== PLAYER LEVEL BAR ======== */
+        .player-level-container {
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid #ffd700;
+            border-radius: 12px;
+            padding: 8px 12px;
+            width: 880px;
+            text-align: center;
+            box-shadow: 0 0 10px rgba(255,215,0,0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .level-label {
+            font-weight: bold;
+            color: #ffd700;
+            margin-bottom: 4px;
+            font-size: 1rem;
+        }
+
+        .exp-bar {
+            width: 100%;
+            height: 12px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .exp-progress {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #4ecdc4, #ffd700);
+            transition: width 0.3s ease-in-out;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(255,215,0,0.5);
+        }
+
+        .exp-text {
+            margin-top: 4px;
+            font-size: 0.85rem;
+            opacity: 0.8;
+            color: #fff;
+        }
+
+        /* ==================== INFO UPDATE STYLES ==================== */
+        .info-update-btn {
+            background: linear-gradient(145deg, #ffd700, #ffae00);
+            border: 2px solid #fff3;
+            color: #222;
+            font-weight: bold;
+            padding: 8px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-left: 10px;
+        }
+        .info-update-btn:hover {
+            background: linear-gradient(145deg, #fff46b, #ffd700);
+            transform: translateY(-2px);
+        }
+
+        .info-update-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .info-update-content {
+            background: linear-gradient(145deg, #2c2c54, #40407a);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            border: 3px solid #ffd700;
+            box-shadow: 0 0 20px rgba(255,215,0,0.3);
+            text-align: center;
+        }
+
+        /* ==================== PERBAIKAN TATA LETAK INFO UPDATE ==================== */
+        .update-text {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 20px 30px; /* 🔹 Tambah padding kiri-kanan agar teks tidak menempel */
+            text-align: left;
+            overflow-y: auto;
+            margin: 20px auto;
+            max-width: 420px; /* 🔹 Batasi lebar agar isi lebih proporsional */
+            line-height: 1.6;
+            color: #f5f5f5;
+            font-size: 0.95rem;
+            box-shadow: inset 0 0 10px rgba(255, 215, 0, 0.1);
+        }
+
+        .update-text h3 {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #ffd700;
+        }
+
+        .update-text ul {
+            padding-left: 25px; /* 🔹 Sedikit indentasi tapi tetap seimbang */
+            list-style: none;
+        }
+
+        .update-text ul li::before {
+            content: "• ";
+            color: #4ecdc4; /* 🔹 Ganti bullet jadi biru kehijauan lembut */
+            font-weight: bold;
+        }
+
+        .close-info-btn {
+            background: linear-gradient(145deg, #666, #444);
+            border: 2px solid #fff3;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .close-info-btn:hover {
+            background: linear-gradient(145deg, #777, #555);
+        }
+
+        .inventory {
+            background: rgba(0, 0, 0, 0.3); /* Kembali ke original */
+            padding: 20px;
+            border-radius: 15px;
+            margin: 15px 0;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .result-display {
+            background: rgba(255, 255, 255, 0.1); /* Kembali ke original */
+            padding: 20px;
+            border-radius: 15px;
+            margin: 15px 0;
+            text-align: center;
+            font-size: 1.2rem;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .shop-item.owned {
+            background: rgba(78, 205, 196, 0.2);
+            border-color: #4ecdc4;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .shop-item.owned:hover {
+            transform: none;
+            border-color: #4ecdc4;
+            box-shadow: none;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        .owned-badge {
+            color: #4ecdc4;
+            font-weight: bold;
+            float: right;
+            font-size: 0.9rem;
+        }
+
+        .current-badge {
+            color: #ffd700;
+            font-weight: bold;
+            float: right;
+            font-size: 0.9rem;
+        }
+
+        /* Kembalikan inventory items ke original */
+        .inventory-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            flex: 1;
+            min-width: 120px;
+            text-align: center;
+            position: relative;
+        }
+
+        /* Kembalikan location buttons ke original */
+        .location-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #444;
+            padding: 10px 15px;
+            border-radius: 20px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 120px;
+            font-size: 0.9rem;
+        }
+
+        .location-btn:not(.locked):hover {
+            border-color: #ffd700;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            background: rgba(255, 215, 0, 0.1);
+        }
+    
+        .stats {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 10px 15px;
+            border-radius: 15px;
+            border: 2px solid rgba(255, 215, 0, 0.4);
+            font-size: 0.9rem;
+            min-width: 80px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+            border-color: rgba(255, 215, 0, 0.7);
+        }
+
+        /* Tambahkan style untuk emoji di stats */
+        .stat-item::before {
+            font-size: 1.1rem;
+            margin-right: 5px;
+        }
+
+        /* Optional: Berikan background berbeda untuk setiap stat */
+        .stat-item:nth-child(1) { /* Gold */
+            background: rgba(255, 215, 0, 0.2);
+        }
+        .stat-item:nth-child(2) { /* Rod */
+            background: rgba(78, 205, 196, 0.2);
+        }
+        .stat-item:nth-child(3) { /* Fish */
+            background: rgba(255, 107, 107, 0.2);
+        }
+        .stat-item:nth-child(4) { /* Speed */
+            background: rgba(147, 112, 219, 0.2);
+        }
+        .stat-item:nth-child(5) { /* Luck */
+            background: rgba(76, 175, 80, 0.2);
+        }
+
+        /* Game world dengan transisi smooth */
+        .game-world {
+            position: relative;
+            height: 350px;
+            margin: 15px 0;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 3px solid #ffd700;
+            transition: all 0.5s ease;
+        }
+
+        /* Efek subtle saat berpindah lokasi */
+        .game-world.location-changing {
+            animation: worldPulse 1s ease-in-out;
+        }
+
+        .game-world.location-changing::before {
+            display: none;
+        }
+
+        @keyframes flashTransition {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 0.1; } /* sangat lembut, nyaris tak terlihat */
+        }
+        
+        @keyframes worldPulse {
+            0%, 100% { 
+                box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            }
+            50% { 
+                box-shadow: 0 10px 40px rgba(255, 215, 0, 0.3);
+            }
+        }
+
+        /* Active boosters kembali ke original */
+        .booster-item {
+            background: rgba(255, 215, 0, 0.2);
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid #ffd700;
+            font-size: 0.8rem;
+        }
+        
+        .booster-warning {
+            text-align: center;
+            color: #ffcc00;
+            background: linear-gradient(145deg, #2c2c54, #40407a);
+            border: 1px solid #ffcc00;
+            border-radius: 8px;
+            padding: 6px 8px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            box-shadow: 0 0 8px rgba(255, 255, 0, 0.3);
+        }
+
+        .location-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 1s ease-in-out; /* 🌈 transisi halus */
+        }
+
+        .location-background.active-bg {
+            opacity: 1;
+            z-index: 1;
+        }
+        
+        /* Sungai di padang rumput dengan batas langit-darat yang tegas */
+        .river-bg {
+            background: linear-gradient(to bottom,
+                #87CEEB 0%,    /* langit biru cerah */
+                #B0E0E6 15%,   /* horizon biru pucat lebih luas */
+                #4CAF50 25%,   /* mulai transisi ke hijau terang */
+                #228B22 65%,   /* hijau daun tua dominan */
+                #006400 100%   /* dasar hijau gelap */
+            );
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Perairan biru mengalir lembut dan realistis */
+        .river-bg::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            width: 120%;
+            left: -10%;
+            height: 180px;
+            background: linear-gradient(
+                90deg,
+                #0047AB 0%,
+                #1E90FF 25%,
+                #00BFFF 50%,
+                #1E90FF 75%,
+                #0047AB 100%
+            );
+            background-size: 300% 100%;
+            border-radius: 50% 50% 0 0;
+            animation: riverFlow 8s linear infinite, waterLight 6s ease-in-out infinite;
+            opacity: 0.95;
+            filter: brightness(1.05);
+        }
+
+        /* Animasi aliran air horizontal lembut */
+        @keyframes riverFlow {
+            0% { background-position: 0 0; transform: translateY(0px); }
+            50% { background-position: 100% 0; transform: translateY(1px); }
+            100% { background-position: 0 0; transform: translateY(0px); }
+        }
+
+        /* Efek pantulan cahaya di permukaan air */
+        @keyframes waterLight {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(30, 144, 255, 0.3);
+                filter: brightness(1);
+            }
+            50% {
+                box-shadow: 0 0 45px rgba(135, 206, 250, 0.6);
+                filter: brightness(1.1);
+            }
+        }
+
+        .river-stones {
+            bottom: 120px;
+            width: 100%;
+            text-align: center;
+            font-size: 8rem;
+        }
+
+        .river-stones::before {
+            content: '🪨🪨🪨';
+        }
+
+        .palm-tree {
+            position: absolute;
+            bottom: 205px;
+            left: 20px;
+            text-align: left;
+            font-size: 10rem;
+            z-index: 2;
+        }
+
+        /* ===== FIX RAWA TIDAK MUNCUL ===== */
+        /* Pastikan setiap background bisa tampil saat aktif */
+        .location-background {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            z-index: 0;
+        }
+
+        .location-background.active-bg {
+            opacity: 1;
+            z-index: 1; /* tampil di atas background lain */
+        }
+
+        /* 🌌 Rawa malam dengan air keruh coklat muda */
+        .swamp-bg {
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            background: linear-gradient(to bottom,
+                #1a2b2a 0%,      /* langit rawa malam (gelap kehijauan) */
+                #253d3b 20%,     /* horizon gelap kebiruan */
+                #345a3a 35%,     /* dedaunan redup di malam hari */
+                #2e4a2f 55%,     /* hijau tua lembap */
+                #3a3322 75%,     /* tanah berlumpur */
+                #2b2417 100%     /* dasar tanah rawa gelap */
+            );
+        }
+
+        /* 🌿 Air rawa lebih natural & seperti di gambar */
+        .swamp-bg::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            width: 120%;
+            left: -10%;
+            height: 180px;
+            background: linear-gradient(
+                90deg,
+                #274e13 0%,
+                #3b6b29 25%,
+                #4c8c3f 50%,
+                #3b6b29 75%, 
+                #274e13 100%
+            );
+            background-size: 250% 100%;
+            border-radius: 50% 50% 0 0;
+            animation: swampWaterFlow 10s linear infinite, swampWaterLight 7s ease-in-out infinite;
+            opacity: 0.92;
+            filter: brightness(0.9) contrast(1.05) saturate(1.2);
+        }
+
+        @keyframes swampWaterFlow {
+            0% { background-position: 0 0; transform: translateY(0px); }
+            50% { background-position: 100% 0; transform: translateY(0.5px); }
+            100% { background-position: 0 0; transform: translateY(0px); }
+        }
+
+        @keyframes swampWaterLight {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(85, 107, 47, 0.25);
+                filter: brightness(0.95);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(124, 178, 74, 0.45);
+                filter: brightness(1.05);
+            }
+        }
+
+        .banyan-tree {
+            position: absolute;
+            bottom: 205px;
+            right: 50px;
+            font-size: 10rem;
+            z-index: 2;
+        }
+
+        .ghost-boo {
+            position: absolute;
+            bottom: 100px;
+            right: 250px;
+            font-size: 10rem;
+            text-align: center;
+            z-index: 2;
+            animation: brutalFadeLong 10s infinite ease-in-out;
+        }
+
+        @keyframes brutalFadeLong {
+            0% {
+                opacity: 0;
+                transform: scale(0.8) rotate(0deg);
+                filter: brightness(0.5);
+            }
+            5% {
+                opacity: 1;
+                transform: scale(1.2) rotate(5deg);
+                filter: brightness(1.4);
+            }
+            15% {
+                opacity: 0.8;
+                transform: scale(1.1) rotate(-3deg);
+                filter: brightness(1.2);
+            }
+            25% {
+                opacity: 0;
+                transform: scale(0.9) rotate(0deg);
+                filter: brightness(0.7);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(0.8) rotate(0deg);
+                filter: brightness(0.5);
+            }
+        }
+
+        .lily-pads {
+            position: absolute;
+            bottom: 80px;
+            left: 100px;
+            font-size: 3rem;
+            z-index: 2;
+            animation: lilyFloat 6s ease-in-out infinite;
+        }
+
+        @keyframes lilyFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-3px) rotate(2deg); }
+        }
+
+        /* 🌄 Danau dengan langit, daratan hijau berbatu, kabut, dan pantulan gunung */
+        .location-background.lake-bg {
+            background:
+                /* Layer 1: langit + rumput + batu + air */
+                linear-gradient(to bottom,
+                    #b3e5fc 0%,     /* langit biru muda */
+                    #a1dcf7 10%,    /* langit cerah mendekati horizon */
+                    #9b9186 40%,    /* tanah/batu terang */
+                    #6f655d 55%,    /* batu gelap */
+                    #4b423a 65%,    /* tanah basah */
+                    #3b83bd 85%,    /* air biru */
+                    #2a5d8f 100%    /* biru tua dasar air */
+                ),
+                /* Layer 2: tekstur batu halus */
+                repeating-linear-gradient(
+                    45deg,
+                    rgba(0,0,0,0.08) 0,
+                    rgba(0,0,0,0.08) 2px,
+                    transparent 2px,
+                    transparent 4px
+                );
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            overflow: hidden;
+        }
+
+        /* Aktif saat lokasi danau dipilih */
+        .location-background.lake-bg.active-bg {
+            opacity: 1;
+            z-index: 1;
+        }
+
+        /* Permukaan air biru beranimasi */
+        .location-background.lake-bg::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            width: 120%;
+            left: -10%;
+            height: 180px;
+            background: linear-gradient(
+                90deg,
+                #1e6ba8 0%,
+                #3793d1 25%,
+                #5ab4e6 50%,
+                #3793d1 75%,
+                #1e6ba8 100%
+            );
+            background-size: 300% 100%;
+            border-radius: 50% 50% 0 0;
+            animation: lakeWaterFlow 9s linear infinite, lakeWaterLight 6s ease-in-out infinite;
+            opacity: 0.95;
+            filter: brightness(1.05);
+            box-shadow: inset 0 60px 100px rgba(255,255,255,0.2);
+        }
+
+        /* Kabut lembut di atas air */
+        .location-background.lake-bg::after {
+            content: '';
+            position: absolute;
+            bottom: 180px;
+            width: 100%;
+            height: 100px;
+            background: radial-gradient(circle at 50% 30%, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0) 70%);
+            filter: blur(4px);
+            opacity: 0.7;
+        }
+
+        /* Gerakan air lembut */
+        @keyframes lakeWaterFlow {
+            0% { background-position: 0 0; transform: translateY(0px); }
+            50% { background-position: 100% 0; transform: translateY(1px); }
+            100% { background-position: 0 0; transform: translateY(0px); }
+        }
+
+        /* Efek pantulan cahaya di permukaan air */
+        @keyframes lakeWaterLight {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(90, 180, 230, 0.3);
+                filter: brightness(1);
+            }
+            50% {
+                box-shadow: 0 0 45px rgba(135, 206, 250, 0.6);
+                filter: brightness(1.1);
+            }
+        }
+
+        /* Gunung di belakang danau */
+        .mountains {
+            position: absolute;
+            bottom: 150px;
+            width: 100%;
+            text-align: center;
+            font-size: 19rem;
+            z-index: 2;
+        }
+
+        /* Pantulan gunung di air */
+        .mountains::after {
+            content: '🗻';
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 20rem;
+            transform: scaleY(-1);
+            opacity: 0.2;
+            filter: blur(3px);
+        }
+
+        .lake-rocks {
+            position: absolute;
+            bottom: 180px; /* sedikit di atas air */
+            width: 100%;
+            text-align: left;
+            font-size: 8rem;
+            z-index: 3;
+            opacity: 0.8;
+            filter: drop-shadow(1px 2px 1px rgba(0,0,0,0.3));
+            animation: rockMove 6s ease-in-out infinite alternate;
+        }
+
+        @keyframes rockMove {
+            0% { transform: translateY(0px); opacity: 0.8; }
+            50% { transform: translateY(-1px); opacity: 1; }
+            100% { transform: translateY(0px); opacity: 0.8; }
+        }
+
+        /* Riak air */
+        .lake-bg .water-ripples {
+            position: absolute;
+            bottom: 190px;
+            width: 100%;
+            height: 30px;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 1px, transparent 1px);
+            background-size: 20px 20px;
+            animation: rippleMove 3s linear infinite;
+            opacity: 0.6;
+        }
+        
+        /* 🌋 Kawah Gunung Berapi — Lava setinggi air sungai/danau */
+        .location-background.volcano-bg {
+            background: linear-gradient(to bottom,
+                #5a3a2e 0%,     /* batu gunung atas */
+                #803d2a 25%,    /* batu merah tua */
+                #b2462b 45%,    /* dasar kawah merah oranye */
+                #e65c27 65%,    /* lava oranye terang */
+                #ff8c42 85%,    /* lava kuning menyala */
+                #662113 100%    /* dasar gelap bawah */
+            );
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            overflow: hidden;
+        }
+
+        /* Aktif saat lokasi kawah dipilih */
+        .location-background.volcano-bg.active-bg {
+            opacity: 1;
+            z-index: 1;
+        }
+
+        /* 🔥 Permukaan lava — setinggi air danau */
+        .location-background.volcano-bg::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            width: 120%;
+            left: -10%;
+            height: 180px; /* ✅ sama seperti air sungai/danau */
+            background: linear-gradient(
+                90deg,
+                #ff4500 0%,
+                #ff7b00 25%,
+                #ffaa00 50%,
+                #ff7b00 75%,
+                #ff4500 100%
+            );
+            background-size: 300% 100%;
+            border-radius: 50% 50% 0 0;
+            animation: lavaFlow 5s linear infinite, lavaGlow 4s ease-in-out infinite;
+            opacity: 0.95;
+            filter: brightness(1.1);
+            box-shadow: inset 0 60px 100px rgba(255, 255, 255, 0.1);
+        }
+
+        /* 🌫 Efek cahaya/asap di atas lava */
+        .location-background.volcano-bg::after {
+            content: '';
+            position: absolute;
+            bottom: 180px; /* ✅ sejajar dengan permukaan lava */
+            width: 100%;
+            height: 120px;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 140, 0, 0.25) 0%, rgba(255, 140, 0, 0) 70%);
+            filter: blur(8px);
+            opacity: 0.7;
+            animation: heatWave 6s ease-in-out infinite alternate;
+        }
+
+        /* Gerakan lava */
+        @keyframes lavaFlow {
+            0% { background-position: 0 0; transform: translateY(0px); }
+            50% { background-position: 100% 0; transform: translateY(1px); }
+            100% { background-position: 0 0; transform: translateY(0px); }
+        }
+
+        /* Efek cahaya panas */
+        @keyframes lavaGlow {
+            0%, 100% { filter: brightness(1.05); }
+            50% { filter: brightness(1.3); }
+        }
+
+        /* Efek gelombang panas di udara */
+        @keyframes heatWave {
+            0% { transform: translateY(0px); opacity: 0.7; }
+            50% { transform: translateY(-2px); opacity: 0.9; }
+            100% { transform: translateY(0px); opacity: 0.7; }
+        }
+
+        /* Riak kecil di permukaan lava */
+        .volcano-bg .lava {
+            position: absolute;
+            bottom: 190px; /* ✅ sejajar dengan sungai/danau */
+            width: 100%;
+            height: 25px;
+            background: radial-gradient(circle, rgba(255, 170, 0, 0.4) 1px, transparent 1px);
+            background-size: 20px 20px;
+            animation: rippleMove 3s linear infinite;
+            opacity: 0.6;
+        }
+
+        .volcano-smoke {
+            position: absolute;
+            bottom: 150px;
+            width: 100%;
+            text-align: center;
+            font-size: 2rem;
+            opacity: 0.4;
+            transform: rotate(-90deg); /* 💨 diarahkan ke atas */
+            transform-origin: center;
+            animation: smokeDrift 6s linear infinite;
+        }
+
+        @keyframes smokeDrift {
+            0% { transform: rotate(-90deg) translateY(0) scale(1); opacity: 0.4; }
+            50% { transform: rotate(-90deg) translateY(-20px) scale(1.1); opacity: 0.6; }
+            100% { transform: rotate(-90deg) translateY(0) scale(1); opacity: 0.4; }
+        }
+
+        /* 🌳 Hutan malam dengan gradasi tanah lebih detail */
+        .location-background.forest-bg {
+            background: linear-gradient(to bottom,
+                #0d1b2a 0%,      /* langit malam biru tua */
+                #1b263b 10%,     /* langit malam gelap */
+                #3e2d26 25%,     /* mulai daratan coklat tua */
+                #5d4037 45%,     /* tanah sedang */
+                #6d4c41 60%,     /* tanah agak terang */
+                #5b4035 75%,     /* tanah lembab sedang */
+                #3b261f 90%,     /* tanah lembab gelap */
+                #2b1b17 100%     /* dasar tanah */
+            );
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            overflow: hidden;
+        }
+
+        /* Aktif saat lokasi hutan dipilih */
+        .location-background.forest-bg.active-bg {
+            opacity: 1;
+            z-index: 1;
+        }
+
+        /* 🌿 Lapisan dedaunan / tanah dasar */
+        .location-background.forest-bg::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            width: 120%;
+            left: -10%;
+            height: 180px;
+            background: linear-gradient(
+                90deg,
+                #2b3d33 0%,     /* hijau lumut gelap */
+                #355a4a 25%,    /* hijau tua */
+                #3f6a58 50%,    /* hijau keabu-an sedang */
+                #355a4a 75%,    /* hijau tua */
+                #2b3d33 100%    /* hijau lumut gelap lagi */
+            );
+            background-size: 300% 100%;
+            border-radius: 50% 50% 0 0;
+            animation: swampWaterFlow 9s linear infinite, swampWaterLight 6s ease-in-out infinite;
+            opacity: 0.95;
+            filter: brightness(0.95) contrast(1.1);
+        }
+
+        /* 🌤️ Cahaya lembut yang menembus pepohonan */
+        .location-background.forest-bg::after {
+            content: '';
+            position: absolute;
+            bottom: 200px;
+            width: 100%;
+            height: 120px;
+            background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
+            filter: blur(6px);
+            opacity: 0.6;
+            animation: forestGlow 10s ease-in-out infinite alternate;
+        }
+
+        /* 🌲 Deretan pohon (emoji) */
+        .forest-trees {
+            position: absolute;
+            bottom: 190px;
+            width: 100%;
+            text-align: center;
+            font-size: 9.5rem;
+            z-index: 2;
+            opacity: 0.9;
+        }
+
+        .forest-log {
+            position: absolute;
+            bottom: 160px;
+            width: 100%;
+            text-align: right;
+            font-size: 4rem;
+            z-index: 3;
+        }
+        
+        /* 🍃 Animasi lembut dedaunan */
+        @keyframes forestFlow {
+            0% { background-position: 0 0; transform: translateY(0px); }
+            50% { background-position: 100% 0; transform: translateY(2px); }
+            100% { background-position: 0 0; transform: translateY(0px); }
+        }
+
+        /* Efek cahaya alami */
+        @keyframes forestLight {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.1); }
+        }
+
+        /* Efek sinar menembus pepohonan */
+        @keyframes forestGlow {
+            0% { opacity: 0.5; transform: translateY(0); }
+            50% { opacity: 0.7; transform: translateY(-3px); }
+            100% { opacity: 0.5; transform: translateY(0); }
+        }
+        
+        /* 🌊 Laut biru tua alami tapi tetap cerah */
+        .location-background.ocean-bg {
+            background: linear-gradient(to bottom,
+                #b3e5fc 0%,      /* langit biru muda */
+                #81d4fa 15%,     /* langit cerah */
+                #f9e4b7 30%,     /* pasir terang */
+                #f1d39b 40%,     /* pasir kekuningan */
+                #eac67a 50%,     /* pasir gelap di tepi air */
+                #1565c0 65%,     /* laut biru alami */
+                #0d47a1 80%,     /* laut biru tua sedang */
+                #083b82 100%     /* laut dalam biru gelap */
+            );
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            overflow: hidden;
+        }
+
+        /* Aktif saat lokasi laut dipilih */
+        .location-background.ocean-bg.active-bg {
+            opacity: 1;
+            z-index: 1;
+        }
+
+        /* 💧 Permukaan air laut (biru tua tapi sedikit lebih terang) */
+        .location-background.ocean-bg::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            width: 120%;
+            left: -10%;
+            height: 180px;
+            background: linear-gradient(
+                90deg,
+                #0c4da2 0%,
+                #1565c0 25%,
+                #1e88e5 50%,
+                #1565c0 75%,
+                #0c4da2 100%
+            );
+            background-size: 300% 100%;
+            border-radius: 50% 50% 0 0;
+            animation: seaWaveMove 9s linear infinite, seaLight 6s ease-in-out infinite;
+            opacity: 0.95;
+            filter: brightness(1.05);
+        }
+
+        /* ✨ Efek pantulan cahaya di permukaan */
+        .location-background.ocean-bg::after {
+            content: '';
+            position: absolute;
+            bottom: 170px;
+            width: 100%;
+            height: 80px;
+            background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0) 70%);
+            filter: blur(3px);
+            opacity: 0.6;
+            animation: seaGlow 8s ease-in-out infinite;
+        }
+
+        /* 🌊 Riak air lembut */
+        .ocean-bg .sea-waves {
+            position: absolute;
+            bottom: 180px;
+            width: 100%;
+            height: 25px;
+            background: radial-gradient(circle, rgba(255,255,255,0.25) 1px, transparent 1px);
+            background-size: 30px 30px;
+            animation: rippleMove 4s linear infinite;
+            opacity: 0.5;
+        }
+
+        /* ⚙️ Animasi laut */
+        @keyframes seaWaveMove {
+            0% { background-position: 0 0; transform: translateY(0px); }
+            50% { background-position: 100% 0; transform: translateY(2px); }
+            100% { background-position: 0 0; transform: translateY(0px); }
+        }
+        @keyframes seaLight {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.1); }
+        }
+        @keyframes seaGlow {
+            0%, 100% { opacity: 0.6; transform: translateY(0); }
+            50% { opacity: 0.8; transform: translateY(-3px); }
+        }
+
+        /* 🌴 Pohon kelapa di tepi pantai */
+        .beach-palms {
+            position: absolute;
+            bottom: 200px; /* sejajar daratan pasir */
+            width: 100%;
+            text-align: center;
+            font-size: 8rem;
+            z-index: 3;
+            opacity: 0.9;
+            text-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .beach-sun {
+            position: absolute;
+            bottom: 300px; /* sejajar daratan pasir */
+            width: 100%;
+            text-align: center;
+            font-size: 8rem;
+            z-index: 3;
+            opacity: 0.9;
+            text-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .beach-shell {
+            position: absolute;
+            bottom: 180px; /* sejajar daratan pasir */
+            width: 100%;
+            text-align: left;
+            font-size: 2rem;
+            z-index: 3;
+            opacity: 0.9;
+            text-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* 🌊 Kedalaman Atlantis - Lokasi Divine */
+        .location-background.atlantis-bg {
+            background: linear-gradient(to bottom,
+                #001f3f 0%,     /* biru sangat gelap atas */
+                #002b55 25%,    /* kedalaman laut */
+                #004080 50%,    /* biru pekat */
+                #0059b3 75%,    /* bercahaya lembut */
+                #0073e6 100%    /* dasar terang */
+            );
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            overflow: hidden;
+        }
+
+        .location-background.atlantis-bg.active-bg {
+            opacity: 1;
+            z-index: 1;
+        }
+
+        .location-background.atlantis-bg::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            width: 120%;
+            left: -10%;
+            height: 180px;
+            background: linear-gradient(
+                90deg,
+                #0047AB 0%,
+                #0055cc 25%,
+                #0066ff 50%,
+                #0055cc 75%,
+                #0047AB 100%
+            );
+            background-size: 300% 100%;
+            border-radius: 50% 50% 0 0;
+            animation: atlantisWaterFlow 10s linear infinite, atlantisLight 6s ease-in-out infinite;
+            opacity: 0.9;
+            filter: brightness(1.1);
+        }
+
+        @keyframes atlantisWaterFlow {
+            0% { background-position: 0 0; transform: translateY(0px); }
+            50% { background-position: 100% 0; transform: translateY(1px); }
+            100% { background-position: 0 0; transform: translateY(0px); }
+        }
+
+        @keyframes atlantisLight {
+            0%, 100% { filter: brightness(1); box-shadow: 0 0 20px rgba(0,150,255,0.3); }
+            50% { filter: brightness(1.2); box-shadow: 0 0 45px rgba(0,200,255,0.6); }
+        }
+
+        .atlantis-ruins {
+            position: absolute;
+            bottom: 155px;
+            left: 270px;
+            align-items: center;
+            font-size: 15rem;
+            opacity: 0.8;
+        }
+
+        .atlantis-pineapple {
+            position: absolute;
+            bottom: 200px;
+            left: -10px;
+            font-size: 8rem;
+            opacity: 0.3;
+        }
+
+        .atlantis-coral {
+            position: absolute;
+            bottom: 160px;
+            left: 30px;
+            font-size: 4rem;
+            opacity: 1;
+        }
+
+        .sea-creatures {
+            position: absolute;
+            bottom: 260px;
+            right: 10px;
+            font-size: 4rem;
+            animation: swimAround 8s ease-in-out infinite alternate;
+        }
+
+        .sea-creatures2 {
+            position: absolute;
+            bottom: 190px;
+            right: 2px;
+            font-size: 3.5rem;
+            animation: swimAround 8s ease-in-out infinite alternate;
+        }
+
+        @keyframes swimAround {
+            0% { transform: translateX(0px); }
+            100% { transform: translateX(-50px); }
+        }
+
+        /* 🍳 Dapur bersih dengan minyak kuning keemasan */
+        .location-background.kitchen-bg {
+            background: linear-gradient(to bottom,
+                #f5f5f5 0%,      /* langit dapur / dinding putih terang */
+                #e0e0e0 20%,     /* ubin dinding abu muda */
+                #d6d6d6 35%,     /* meja dapur abu */
+                #bdbdbd 55%,     /* lantai dapur */
+                #a3a3a3 70%,     /* lantai bawah abu gelap */
+                #ffe082 85%,     /* awal warna minyak */
+                #ffd54f 90%,     /* minyak kuning cerah */
+                #ffca28 95%,     /* minyak keemasan */
+                #fbc02d 100%     /* dasar minyak pekat */
+            );
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            overflow: hidden;
+        }
+
+        /* Aktif saat lokasi Dapur dipilih */
+        .location-background.kitchen-bg.active-bg {
+            opacity: 1;
+            z-index: 1;
+        }
+
+        /* 🛢️ Lapisan minyak berkilau */
+        .location-background.kitchen-bg::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            width: 120%;
+            left: -10%;
+            height: 180px;
+            background: linear-gradient(
+                90deg,
+                #f9a825 0%,
+                #ffb300 25%,
+                #ffc107 50%,
+                #ffb300 75%,
+                #f9a825 100%
+            );
+            background-size: 300% 100%;
+            border-radius: 50% 50% 0 0;
+            animation: oilFlow 9s linear infinite, oilShine 6s ease-in-out infinite;
+            opacity: 0.9;
+            filter: brightness(1.2);
+        }
+
+        /* ✨ Animasi minyak tetap sama */
+        @keyframes oilFlow {
+            0% { background-position: 0 0; }
+            50% { background-position: 100% 0; }
+            100% { background-position: 0 0; }
+        }
+
+        @keyframes oilShine {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.25); }
+        }
+        
+        .kitchen-logo {
+            position: absolute;
+            bottom: 200px;
+            width: 100%;
+            text-align: right;
+            font-size: 8rem;
+            z-index: 3;
+            opacity: 0.9;
+            text-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Improved Fisherman Character - Baju Hijau */
+        .fisherman {
+            position: absolute;
+            bottom: 180px;
+            left: 100px;
+            width: 100px;
+            height: 140px;
+            z-index: 10;
+            transform-origin: bottom center;
+        }
+
+        .fisherman-body {
+            position: absolute;
+            width: 50px;
+            height: 70px;
+            background: linear-gradient(to bottom, #0350c5, #009df8);
+            border-radius: 25px 25px 0 0;
+            bottom: 0;
+            left: 25px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.3);
+        }
+        
+        .fisherman-head {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(to bottom, #FFD700, #FFA500);
+            border-radius: 50%;
+            bottom: 70px;
+            left: 30px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+        
+        /* Fishing Rod yang Lebih Realistis - dengan Reel Lingkaran */
+        .fishing-rod {
+            position: absolute;
+            width: 100px;
+            height: 7px;
+            border-radius: 4px;
+            top: 100px;
+            left: 40px;
+            transform-origin: left center;
+            transform: rotate(-25deg);
+            box-shadow: 0 0 6px rgba(255, 255, 255, 0.2);
+        }
+
+        /* 🎛️ Reel pancing berbentuk lingkaran abu-abu */
+        .fishing-rod::after {
+            content: "";
+            position: absolute;
+            right: 70px;        /* geser posisi reel di batang */
+            top: 190%;           /* sejajarkan di tengah vertikal */
+            width: 16px;
+            height: 16px;
+            background: radial-gradient(circle at 30% 30%, #eeeeee, #b0b0b0 60%, #888888);
+            border-radius: 50%;
+            border: 2px solid #666;
+            transform: translateY(-50%) rotate(10deg);
+            box-shadow: inset 0 0 4px rgba(255, 255, 255, 0.3),
+                        0 0 4px rgba(0, 0, 0, 0.4);
+        }
+
+        /* ✋ Handle (pegangan di ujung kiri pancingan) */
+        .fishing-rod::before {
+            content: "";
+            position: absolute;
+            left: -10px; /* sedikit keluar dari batang */
+            top: 50%;
+            width: 35px;
+            height: 8px;
+            background: linear-gradient(90deg, #3e2723, #5d4037, #4e342e);
+            border-radius: 6px;
+            transform: translateY(-50%) rotate(-3deg);
+            box-shadow: inset 0 0 3px rgba(255,255,255,0.2),
+                        0 0 4px rgba(0,0,0,0.4);
+        }
+
+        /* Efek warna sesuai level rod */
+        /* 🌿 Rod 1 – Bambu */
+        .fishing-rod.rod1 {
+            background: linear-gradient(90deg, #8bc34a, #c2d32a, #d6e24f);
+            box-shadow: 0 0 6px rgba(173, 255, 47, 0.4);
+        }
+
+        /* 🪵 Rod 2 – Kayu */
+        .fishing-rod.rod2 {
+            background: linear-gradient(90deg, #4e342e, #6d4c41, #a1887f);
+            box-shadow: 0 0 8px rgba(121, 85, 72, 0.5);
+        }
+
+        /* ⚙️ Rod 3 – Besi */
+        .fishing-rod.rod3 {
+            background: linear-gradient(90deg, #757575, #bdbdbd, #eeeeee);
+            box-shadow: 0 0 10px rgba(200, 200, 200, 0.6);
+        }
+
+        /* 🏆 Rod 4 – Emas */
+        .fishing-rod.rod4 {
+            background: linear-gradient(90deg, #ffb300, #ffd54f, #fff8e1);
+            box-shadow: 0 0 12px rgba(255, 215, 0, 0.8);
+        }
+
+        /* 🪨 Rod 5 – Obsidian */
+        .fishing-rod.rod5 {
+            background: linear-gradient(90deg, #0a0a0a, #1a1a2e, #4a148c);
+            box-shadow: 0 0 15px rgba(98, 0, 234, 0.5);
+        }
+
+        /* 💎 Rod 6 – Berlian */
+        .fishing-rod.rod6 {
+            background: linear-gradient(90deg, #81d4fa, #b3e5fc, #e0f7fa);
+            box-shadow: 0 0 18px rgba(100, 200, 255, 0.8);
+        }
+        
+        /* 🔥 Rod 7 – Berlian Merah */
+        .fishing-rod.rod7 {
+            background: linear-gradient(90deg, #b30000, #ff3333, #ff6666);
+            box-shadow: 0 0 22px rgba(255, 70, 70, 0.85);
+        }
+
+        /* 🎣 Tali pancing – animasi lempar */
+        .fishing-line {
+            position: absolute;
+            width: 2px;
+            height: 0;
+            background: linear-gradient(to bottom, #ccc, #999);
+            left: 105px; /* titik keluar dari ujung pancing */
+            top: 30px;
+            opacity: 0;
+            transform-origin: top left;
+            z-index: 3;
+            transition: height 0.4s ease-out, opacity 0.2s ease;
+        }
+
+        /* Saat dilempar */
+        .fishing-line.cast {
+            height: 225px; /* panjang tali saat dilempar */
+            opacity: 1;
+            transform: rotate(-45deg); /* arah ke kiri bawah */
+            animation: lineSwing 0.5s ease-out forwards; 
+        }
+        
+        /* Efek ayunan ringan tali saat dilempar */
+        @keyframes lineSwing {
+            0% {
+                transform: rotate(-70deg);
+            }
+            50% {
+                transform: rotate(-40deg);
+            }
+            100% {
+                transform: rotate(-25deg);
+            }
+        }
+
+        /* Animasi Umpan */
+        .bait-animation {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #ff4800;
+            border-radius: 50%;
+            bottom: 48px;
+            left: 120px;
+            opacity: 0;
+            z-index: 4;
+        }
+        
+        /* 🌊 CIPRATAN AIR SAAT UMPAN JATUH - realistis dan jelas */
+        .bait-animation::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            width: 8px;
+            height: 8px;
+            background: radial-gradient(circle, rgba(173,216,230,0.9) 0%, rgba(173,216,230,0.1) 80%);
+            border-radius: 50%;
+            transform: translateX(-50%) scale(0);
+            animation: baitSplash 0.6s ease-out forwards;
+            z-index: 8;
+            pointer-events: none;
+        }
+
+        /* 💦 Partikel cipratan air dari umpan */
+        @keyframes baitSplash {
+            0% {
+                transform: translateX(-50%) scale(0.3);
+                opacity: 1;
+                box-shadow:
+                    0 -2px 0 3px rgba(173,216,230,0.6),
+                    0 -4px 0 6px rgba(173,216,230,0.4),
+                    0 -6px 0 9px rgba(173,216,230,0.2);
+            }
+            40% {
+                transform: translateX(-50%) scale(1.2);
+                box-shadow:
+                    -6px -12px 0 2px rgba(173,216,230,0.5),
+                    6px -14px 0 2px rgba(173,216,230,0.5),
+                    0 -10px 0 3px rgba(173,216,230,0.6);
+            }
+            100% {
+                transform: translateX(-50%) scale(1.5);
+                opacity: 0;
+                box-shadow:
+                    -8px -16px 0 1px rgba(173,216,230,0.2),
+                    8px -18px 0 1px rgba(173,216,230,0.1),
+                    0 -12px 0 1px rgba(173,216,230,0.1);
+            }
+        }
+
+        /* 🐟 CIPRATAN AIR SAAT IKAN TERTANGKAP */
+        .fish-caught::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 25px;
+            height: 25px;
+            background: radial-gradient(circle, rgba(135,206,250,0.9) 0%, transparent 70%);
+            border-radius: 50%;
+            transform: translateX(-50%) scale(0);
+            animation: fishSplash 0.8s ease-out forwards;
+            z-index: 8;
+            pointer-events: none;
+        }
+
+        /* 💥 Efek percikan besar naik */
+        @keyframes fishSplash {
+            0% {
+                transform: translateX(-50%) scale(0.2);
+                opacity: 1;
+                box-shadow:
+                    0 -5px 0 6px rgba(173,216,230,0.6),
+                    0 -10px 0 10px rgba(173,216,230,0.4);
+            }
+            40% {
+                transform: translateX(-50%) scale(1.2);
+                box-shadow:
+                    -10px -18px 0 4px rgba(173,216,230,0.5),
+                    10px -20px 0 4px rgba(173,216,230,0.4),
+                    0 -25px 0 6px rgba(173,216,230,0.3);
+            }
+            100% {
+                transform: translateX(-50%) scale(1.8);
+                opacity: 0;
+                box-shadow:
+                    -12px -24px 0 3px rgba(173,216,230,0.1),
+                    12px -26px 0 3px rgba(173,216,230,0.05);
+            }
+        }
+        
+        .fishing .bait-animation {
+            animation: baitThrow 0.5s ease-out 0.5s forwards,  /* delay 0.5s biar muncul setelah tali */
+                    baitBob 2s ease-in-out 1s infinite;     /* mulai goyang setelah lempar selesai */
+        }
+        
+        @keyframes baitThrow {
+            0% {
+                transform: translate(77px, 150px) scale(0.8);
+                opacity: 0; /* belum kelihatan */
+            }
+            100% {
+                transform: translate(77px, 150px) scale(0.8);
+                opacity: 1; /* muncul saat tali sudah sampai */
+            }
+        }
+        
+        @keyframes baitBob {
+            0%, 100% { transform: translate(77px, 150px) scale(0.8); }
+            50% { transform: translate(77px, 155px) scale(0.8); }
+        }
+        
+        /* Animations */
+        .fishing .fishing-rod {
+            animation: rodCast 2s ease-in-out infinite;
+        }
+        
+        .auto-fishing .fisherman {
+            animation: autoFish 2s ease-in-out infinite;
+        }
+        
+        @keyframes rodCast {
+            0%, 100% { transform: rotate(-45deg) translateY(0px); }
+            25% { transform: rotate(-50deg) translateY(-2px); }
+            50% { transform: rotate(-55deg) translateY(0px); }
+            75% { transform: rotate(-40deg) translateY(2px); }
+        }
+        
+        @keyframes autoFish {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        /* Fish Animation - Ikan keluar dari air ke arah pemain */
+        .fish-caught {
+            position: absolute;
+            font-size: 3rem;
+            animation: fishJump 1.5s ease-out;
+            z-index: 5;
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.5));
+        }
+        
+        @keyframes fishJump {
+            0% { transform: translate(80px, 150px) scale(0) rotate(0deg); opacity: 0; }
+            30% { transform: translate(40px, 100px) scale(1.3) rotate(-10deg); opacity: 1; }
+            70% { transform: translate(20px, 50px) scale(1.1) rotate(10deg); opacity: 1; }
+            100% { transform: translate(-20px, -20px) scale(1) rotate(0deg); opacity: 0; }
+        }
+        
+        .result-display {
+            white-space: pre; /* atau normal */
+        }
+        
+        /* Controls */
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+        
+        .control-btn {
+            background: linear-gradient(145deg, #ff6b6b, #ee5a24);
+            border: none;
+            padding: 12px 20px;
+            font-size: 1rem;
+            color: white;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            min-width: 140px;
+            border: 2px solid #ffd700;
+        }
+        
+        .control-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+        
+        .control-btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .control-btn.active {
+            background: linear-gradient(145deg, #4ecdc4, #44a08d);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        .location-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #444;
+            padding: 10px 15px;
+            border-radius: 20px;
+            color: white;
+            cursor: pointer; /* Default cursor untuk semua tombol */
+            transition: all 0.3s;
+            min-width: 120px;
+            font-size: 0.9rem;
+        }
+
+        .location-btn.active {
+            border-color: #4ecdc4;
+            background: rgba(78, 205, 196, 0.3);
+            transform: scale(1.05);
+        }
+
+        .location-btn.locked {
+            opacity: 0.5;
+            background: rgba(255, 0, 0, 0.2);
+            border-color: #ff6b6b;
+            /* PERBAIKAN: Tetap gunakan cursor pointer untuk locked */
+            cursor: pointer;
+        }
+
+        /* Hover effect hanya untuk tombol yang tidak locked */
+        .location-btn:not(.locked):hover {
+            border-color: #ffd700;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        /* PERBAIKAN: Untuk tombol locked, beri hover effect yang berbeda */
+        .location-btn.locked:hover {
+            cursor: pointer;
+            border-color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.3);
+            transform: translateY(0px); /* Tidak ada lift effect */
+            box-shadow: 0 2px 8px rgba(255, 0, 0, 0.3);
+        }
+
+        .location-btn.locked span {
+            color: #ffd700 !important;
+            font-weight: bold;
+        }
+        
+        /* Progress */
+        .fishing-progress {
+            width: 100%;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            margin: 15px 0;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #4ecdc4, #44a08d);
+            width: 0%;
+            transition: width 0.1s;
+            border-radius: 6px;
+        }
+        
+        .shop-modal, .fish-list-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .shop-modal.active, .fish-list-modal.active {
+            display: flex;
+        }
+        
+        .shop-content, .fish-list-content {
+            background: linear-gradient(145deg, #2c2c54, #40407a);
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 600px;
+            width: 95%;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 3px solid #ffd700;
+        }
+        
+        .shop-category, .fish-list-category {
+            margin: 20px 0;
+        }
+        
+        .shop-category h3, .fish-list-category h3 {
+            color: #ffd700;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #ffd700;
+            padding-bottom: 5px;
+        }
+        
+        .shop-items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 10px;
+        }
+        
+        .shop-item {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #444;
+            padding: 15px;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+        }
+        
+        .shop-item:hover {
+            border-color: #ffd700;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .shop-item:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .item-rarity {
+            font-size: 0.8rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-right: 5px;
+        }
+
+        .item-price {
+            color: #ffd700;
+            font-weight: bold;
+            float: right;
+        }
+        
+        .item-stats {
+            font-size: 0.8rem;
+            color: #4ecdc4;
+            margin-top: 5px;
+        }
+        
+        /* Inventory */
+        .inventory {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 15px 0;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+        }
+        
+        .inventory-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        
+        .inventory-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            flex: 1;
+            min-width: 120px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .inventory-item.locked {
+            background: rgba(78, 205, 196, 0.2);
+            border-color: #4ecdc4;
+        }
+        
+        .lock-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .sell-fish-btn {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .active-boosters {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .booster-item {
+            background: rgba(255, 215, 0, 0.2);
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid #ffd700;
+            font-size: 0.8rem;
+        }
+            
+        /* Rod Selector */
+        .rod-selector-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            z-index:3000;
+        }
+
+        .rod-selector-content {
+            width: 92%;
+            max-width: 760px;
+            max-height: 82vh;
+            overflow-y:auto;
+            background: #2e2a5a;
+            border: 3px solid #ffd700;
+            border-radius: 14px;
+            padding: 22px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+            color: #fff;
+        }
+
+        .rod-selector-content h2 {
+            text-align:center;
+            color:#ffd700;
+            margin: 0 0 18px 0;
+            font-size:1.35rem;
+            font-weight: 700;
+        }
+
+        .rod-list-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 16px;
+        }
+
+        .rod-option {
+            background: #3a3570;
+            border-radius: 12px;
+            padding: 14px;
+            border: 2px solid rgba(255,255,255,0.06);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.35);
+            cursor: pointer;
+            transition: all .18s ease;
+        }
+
+        .rod-option:hover { 
+            transform: translateY(-4px); 
+            border-color: rgba(255,215,0,0.16); 
+        }
+
+        .rod-option.active { 
+            border-color: #ffd700; 
+            box-shadow: 0 0 14px rgba(255,215,0,0.12); 
+        }
+
+        /* Header (rarity kiri + nama kanan) */
+        .rod-header {
+            display:flex;
+            align-items:center;
+            justify-content:flex-start;
+            gap: 10px;
+        }
+
+        /* Label rarity mirip toko */
+        .rod-rarity-badge {
+            font-size: 0.8rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-right: 5px;
+        }
+
+        /* Nama pancingan kanan */
+        .rod-name {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #ffffff;
+            text-align:left;
+        }
+
+        /* Statistik kecepatan & luck */
+        .rod-stats {
+            margin-top: 8px;
+            color: #dfe8ff;
+            font-size: 0.95rem;
+        }
+
+        /* Label “Sedang Dipakai” */
+        .active-tag {
+            margin-top: 10px;
+            display:inline-block;
+            color:#ffd700;
+            font-weight:700;
+            font-size:0.9rem;
+        }
+
+        /* 🎣 Bait Selector (menggunakan style & warna rarity yang sama seperti Rod Selector) */
+        .bait-selector-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            z-index:3000;
+        }
+
+        .bait-selector-content {
+            width: 92%;
+            max-width: 760px;
+            max-height: 82vh;
+            overflow-y:auto;
+            background: #2e2a5a;
+            border: 3px solid #ffd700;
+            border-radius: 14px;
+            padding: 22px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+            color: #fff;        
+        }
+
+        .bait-selector-content h2 {
+            text-align:center;
+            color:#ffd700;
+            margin: 0 0 18px 0;
+            font-size:1.35rem;
+            font-weight: 700;
+        }
+
+        .bait-list-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 16px;
+        }
+
+        .bait-option {
+            background: #3a3570;
+            border-radius: 12px;
+            padding: 14px;
+            border: 2px solid rgba(255,255,255,0.06);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.35);
+            cursor: pointer;
+            transition: all .18s ease;
+        }
+
+        .bait-option:hover {
+            transform: translateY(-4px); 
+            border-color: rgba(255,215,0,0.16);
+        }
+
+        .bait-option.active {
+            border-color: #ffd700; 
+            box-shadow: 0 0 14px rgba(255,215,0,0.12); 
+        }
+
+        .bait-header {
+            display:flex;
+            align-items:center;
+            justify-content:flex-start;
+            gap: 10px;
+        }
+
+        .bait-rarity-badge {
+            font-size: 0.8rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-right: 5px;
+        }
+
+        .bait-name {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #ffffff;
+            text-align:left;
+        }
+
+        .bait-stats {
+            margin-top: 8px;
+            color: #dfe8ff;
+            font-size: 0.95rem;
+        }
+
+        .active-tag {
+            margin-top: 10px;
+            display:inline-block;
+            color:#ffd700;
+            font-weight:700;
+            font-size:0.9rem;
+        }
+
+        /* Tombol Tutup Modal */
+        .bait-close-btn {
+            background: linear-gradient(145deg, #4ecdc4, #44a08d);
+            border: none;
+            padding: 10px 15px;
+            font-size: 1rem;
+            color: white;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            border: 2px solid rgba(255, 215, 0, 0.5);
+            min-width: 120px;
+
+            display: block;
+            margin: 20px auto 15px auto;
+            text-align: center;
+        }
+
+        .bait-close-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            background: linear-gradient(145deg, #44a08d, #4ecdc4);
+        }
+
+        /* === Warna Rarity === */
+        .rarity-junk { background:#c75102fd; color:#fff; }
+        .rarity-common { background:#7f8c8d; color:#fff; }
+        .rarity-uncommon { background:#00b894; color:#fff; }
+        .rarity-rare { background:#0984e3; color:#fff; }
+        .rarity-epic { background:#8817fa; color:#fff; }
+        .rarity-mythic { background:#ff0101; color:#fff; }
+        .rarity-secret {
+            background: linear-gradient(
+                90deg,
+                #d4f8ff,
+                #6bbdf5,
+                #6bbdf5,
+                #8fd6ff,
+                #8fd6ff,
+                #b6ecff,
+                #d4f8ff
+            );
+            background-size: 400% 100%;
+            animation: secretRainbow 5s linear infinite;
+        }
+        .rarity-divine {
+            background: linear-gradient(
+                90deg,
+                #ff0000,
+                #ff7f00,
+                #ffff00,
+                #00ff00,
+                #00ffff,
+                #0000ff,
+                #8b00ff,
+                #ff1493
+            );
+            background-size: 400% 100%;
+            animation: secretRainbow 5s linear infinite;
+        }
+
+        @keyframes secretRainbow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 400% 50%; }
+        }
+        
+        /* Tombol Tutup */
+        .rod-close-btn {
+            background: linear-gradient(145deg, #4ecdc4, #44a08d);
+            border: none;
+            padding: 10px 15px;
+            font-size: 1rem;
+            color: white;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            border: 2px solid rgba(255, 215, 0, 0.5);
+            min-width: 120px;
+
+            display: block;
+            margin: 20px auto 15px auto;
+            text-align: center;
+        }
+
+        .rod-close-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            background: linear-gradient(145deg, #44a08d, #4ecdc4);
+        }
+
+        /* Responsif */
+        @media (max-width:420px) {
+            .rod-list-grid { grid-template-columns: 1fr; }
+            .rod-option { padding:12px; }
+            .rod-rarity-badge { padding:5px 8px; font-size:0.75rem; }
+            .rod-name { font-size:0.98rem; }
+        }
+        
+        /* ==================== CATATAN IKAN ==================== */
+        #fishIndexModal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .fish-list-content {
+            background: linear-gradient(145deg, #2c2c54, #40407a);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 80vh;
+            overflow-y: auto; /* scroll hanya di seluruh modal */
+            border: 3px solid #ffd700;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+        }
+
+        .fish-index-section {
+            margin-bottom: 25px;
+        }
+
+        /* Grid ikan tanpa scroll internal */
+        .fish-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 10px;
+            overflow: visible !important;  /* 🚫 Hilangkan scroll dalam grid */
+            max-height: none !important;   /* 🚫 Jangan batasi tinggi grid */
+        }
+
+        /* Kotak ikan */
+        .fish-item {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            transition: transform 0.15s ease;
+        }
+
+        .fish-item:hover {
+            transform: scale(1.05);
+        }
+
+        /* Emoji ikan */
+        .fish-emoji {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        /* Nama ikan */
+        .fish-name {
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .rarity-label {
+            font-size: 0.8rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-right: 5px;
+        }
+
+
+        /* Admin Modal */
+        .admin-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .admin-modal.active {
+            display: flex;
+        }
+
+        .admin-content {
+            background: linear-gradient(145deg, #1a1a2e, #16213e);
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 95%;
+            border: 3px solid #ff0000;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.5);
+        }
+
+        .admin-header {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #ff0000;
+            font-size: 1.5rem;
+        }
+
+        .admin-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .admin-btn {
+            background: linear-gradient(145deg, #ff0000, #cc0000);
+            border: none;
+            padding: 15px;
+            font-size: 1rem;
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid #ff6b6b;
+        }
+
+        .admin-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.4);
+        }
+
+        .admin-input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .admin-input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #ff0000;
+            border-radius: 8px;
+            background: rgb(255, 255, 255);
+            color: rgb(2, 0, 0);
+            font-size: 1rem;
+        }
+
+        .admin-input::placeholder {
+            color: #ccc;
+        }
+
+        /* Fish Selector Styles */
+        .fish-selector-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .fish-selection-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 10px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+
+            /* 🚫 Hapus scroll internal dan batas tinggi */
+            overflow: visible !important;
+            max-height: none !important;
+        }
+
+        .fish-selection-item {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #444;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .fish-selection-item:hover {
+            border-color: #4ECDC4;
+            transform: translateY(-2px);
+        }
+
+        .fish-selection-item.selected {
+            border-color: #ffd700;
+            background: rgba(255, 215, 0, 0.2);
+            transform: scale(1.05);
+        }
+
+        .fish-selector-emoji {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+
+        .fish-selector-name {
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+
+        .fish-selector-price {
+            color: #ffd700;
+            font-size: 0.8rem;
+        }
+
+        .fish-selector-rarity {
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 8px;
+            margin-top: 3px;
+        }
+        
+        .secret-code {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            color: #ffd700;
+            cursor: pointer;
+            z-index: 100;
+        }
+
+        /* Game Management Section */
+        .game-management {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 15px;
+            margin: 15px 0;
+            border: 2px solid rgba(78, 205, 196, 0.3);
+            text-align: center;
+        }
+
+        .management-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .management-btn {
+            background: linear-gradient(145deg, #4ecdc4, #44a08d);
+            border: none;
+            padding: 10px 15px;
+            font-size: 0.9rem;
+            color: white;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            border: 2px solid rgba(255, 215, 0, 0.5);
+            min-width: 120px;
+        }
+
+        .management-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            background: linear-gradient(145deg, #44a08d, #4ecdc4);
+        }
+
+        .save-status {
+            font-size: 0.8rem;
+            color: #4ecdc4;
+            opacity: 0.8;
+        }
+
+        .reset-btn {
+            background: linear-gradient(145deg, #ff4d4d, #b30000);
+        }
+        .reset-btn:hover {
+            background: linear-gradient(145deg, #ff6666, #cc0000);
+        }
+
+        /* === FIX: pastikan modal admin/fish bisa discroll, grid TIDAK punya scrollbar internal === */
+        /* Pastikan kontainer modal yang menampung grid punya scroll & batas tinggi */
+        .admin-content,
+        .shop-content,
+        .fish-list-content,
+        .rod-selector-content,
+        .bait-selector-content {
+            max-height: 80vh !important;    /* batas tinggi modal supaya tidak melebar melewati layar */
+            overflow-y: auto !important;    /* scroll berada di modal, bukan di grid */
+            -webkit-overflow-scrolling: touch; /* smooth scroll di mobile */
+        }
+
+        /* Pastikan grid ikan tidak membuat scrollbar internal */
+        .fish-selection-grid,
+        .fish-list,
+        .fish-list-grid,
+        .fish-selector-grid {
+            overflow: visible !important;
+            max-height: none !important;
+        }
+
+        /* Jika ada aturan lama yang menetapkan overflow-y: auto / max-height pada .fish-selection-grid,
+        baris di atas akan menimpa (important). */
+
+        /* Opsional: sedikit padding & spacing agar isi tidak nempel saat modal discroll */
+        .admin-content > .fish-index-section,
+        .fish-list-content > .fish-index-section {
+            padding-bottom: 12px;
+        }

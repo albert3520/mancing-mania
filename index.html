@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mancing Mania</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Admin Modal -->
+    <div class="admin-modal" id="adminModal">
+        <div class="admin-content">
+            <div class="admin-header">
+                PANEL ADMIN
+            </div>
+            
+            <div class="admin-controls">
+                <button class="admin-btn" onclick="openFishSelector()" style="background: linear-gradient(145deg, #4ECDC4, #44a08d);">
+                    🐟 Pilih Ikan untuk Inventory
+                </button>
+
+                <div class="admin-input-group">
+                    <input type="number" class="admin-input" id="customGold" placeholder="Jumlah Coin">
+                    <button class="admin-btn" onclick="addCustomGold()">
+                        💰 Tambah Coin
+                    </button>
+                </div>
+                
+                <div style="text-align: center; margin-top: 20px;">
+                    <button class="admin-btn" onclick="closeAdminModal()" 
+                            style="background: linear-gradient(145deg, #666, #444);">
+                        Tutup
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Pilih Ikan -->
+    <div class="admin-modal" id="fishSelectorModal">
+        <div class="admin-content" style="max-width: 800px; max-height: 90vh;">
+            <div class="admin-header">
+                🐟 PILIH IKAN UNTUK INVENTORY
+            </div>
+            
+            <div class="fish-selector-controls">
+                <div class="admin-input-group">
+                    <select class="admin-input" id="locationSelect" onchange="updateFishSelection()">
+                        <option value="all">Semua Lokasi</option>
+                        <option value="river">Sungai</option>
+                        <option value="swamp">Rawa</option>
+                        <option value="lake">Danau</option>
+                        <option value="volcano">Kawah</option>
+                        <option value="forest">Hutan</option>
+                        <option value="ocean">Laut</option>
+                        <option value="atlantis">Atlantis</option>
+                        <option value="kitchen">Dapur</option>
+                    </select>
+                    
+                    <input type="number" class="admin-input" id="fishQuantity" value="1" min="1" max="999" placeholder="Jumlah">
+                </div>
+                
+                <div class="fish-selection-grid" id="fishSelectionGrid">
+                    <!-- Daftar ikan akan diisi oleh JavaScript -->
+                </div>
+                
+                <div style="text-align: center; margin-top: 20px;">
+                    <button class="admin-btn" onclick="addSelectedFish()" style="background: linear-gradient(145deg, #4ECDC4, #44a08d);">
+                        Setuju
+                    </button>
+                    <button class="admin-btn" onclick="closeFishSelector()" 
+                            style="background: linear-gradient(145deg, #666, #444); margin-left: 10px;">
+                        Batal
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="game-container">
+        
+        <!-- Header -->
+        <div class="game-header">
+            <h1 class="title">Mancing Mania</h1>
+            <div class="stats">
+                <div class="stat-item" title="Coin">🪙 <span id="gold">500</span></div>
+                <div class="stat-item" title="Peralatan Dipakai">🪝 <span id="rodLevel">Bambu</span></div>
+                <div class="stat-item" title="Total Memancing">🐟 <span id="totalFish">0</span></div>
+                <div class="stat-item" title="Kecepatan Tarik">⚡ <span id="fishingSpeed">1x</span></div>
+                <div class="stat-item" title="Keberuntungan">🍀 <span id="totalLuck">0%</span></div>
+                <div class="stat-item" title="Versi Game">🔧 Version <span id="gameVersion"></span></div>
+            </div>
+        </div>
+        
+        <!-- Level & EXP -->
+        <div class="player-level-container">
+            <div class="level-label">
+                Level <span id="playerLevel">1</span>
+            </div>
+            <div class="exp-bar">
+                <div class="exp-progress" id="expProgress"></div>
+            </div>
+            <div class="exp-text" id="expText">0 / 50</div>
+        </div>
+        
+        <!-- Game World -->
+        <div class="game-world">
+            <!-- Background Sungai -->
+            <div class="location-background river-bg active-bg" id="riverBg">
+                <div class="palm-tree">🌳</div>
+                <div class="river-stones"></div>
+                <div class="water-ripples"></div>
+            </div>
+            
+            <!-- Background Rawa -->
+            <div class="location-background swamp-bg" id="swampBg">
+                <div class="banyan-tree">🌳 🌳🌳</div>
+                <div class="lily-pads">🪷</div>
+                <div class="ghost-boo">👻</div>
+                <div class="water-ripples"></div>
+            </div>
+            
+            <!-- Background Danau -->
+            <div class="location-background lake-bg" id="lakeBg">
+                <div class="mountains">🗻</div>
+                <div class="lake-rocks">🪨</div>
+                <div class="water-ripples"></div>
+            </div>
+            
+            <!-- Background Kawah -->
+            <div class="location-background volcano-bg" id="volcanoBg">
+                <div class="volcano-smoke">💨</div>
+                <div class="lava"></div>
+            </div>
+
+            <!-- Background Hutan -->
+            <div class="location-background forest-bg" id="forestBg">
+                <div class="forest-trees">🌲🌳🌳🌲</div>
+                <div class="forest-log">🪵</div>        
+                <div class="ghost-boo">👻</div>        
+            </div>
+
+            <!-- Background Laut -->
+            <div class="location-background ocean-bg" id="oceanBg">
+                <div class="beach-palms">🌴 🌴 🌴 🌴</div>
+                <div class="beach-sun">☀️</div>
+                <div class="beach-shell">🐚</div>
+                <div class="sea-waves"></div>
+            </div>
+            
+            <!-- Background Atlantis -->
+            <div class="location-background atlantis-bg" id="atlantisBg">
+                <div class="atlantis-ruins">🏛️</div>
+                <div class="atlantis-pineapple">🍍</div>
+                <div class="atlantis-coral">🪸</div>
+                <div class="sea-creatures">🪼</div>
+                <div class="sea-creatures2">🪼</div>
+            </div>
+            
+            <!-- Background Dapur -->
+            <div class="location-background kitchen-bg" id="kitchenBg">
+                <div class="kitchen-logo">🍽️</div>
+            </div>
+
+            <!-- Character -->
+            <div class="fisherman" id="fisherman">
+                <div class="fisherman-head"></div>
+                <div class="fisherman-body"></div>
+                <div class="fishing-rod"></div>
+                <div class="fishing-line"></div>
+                <div class="bait-animation"></div>
+            </div>
+        </div>
+        
+        <!-- Progress Bar -->
+        <div class="fishing-progress">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <!-- Results -->
+        <div class="result-display" id="result">
+            Selamat datang di Mancing Mania!
+        </div>
+        
+        <!-- Controls -->
+        <div class="controls">
+            <button class="control-btn" id="castButton" onclick="startFishing()">
+                🎣 MEMANCING
+            </button>
+            <button class="control-btn" id="autoFishBtn" onclick="toggleAutoFishing()">
+                ⚡ AUTO MANCING
+            </button>
+            <button class="control-btn" onclick="sellAllFish()">
+                💲 JUAL SEMUA
+            </button>
+            <button class="control-btn" onclick="openShop()">
+                🏪 TOKO
+            </button>
+            <button class="control-btn" onclick="openRodSelector()">
+                🪝 PANCINGAN
+            </button>
+            <button class="control-btn" onclick="openBaitSelector()">
+                🪱 UMPAN
+            </button>
+            <button class="control-btn" onclick="openFishIndex()">            
+                📋 CATATAN IKAN
+            </button>        
+        </div>
+        
+        <!-- Location Selector -->
+        <div class="controls">
+            <button class="location-btn active" onclick="changeLocation('river')" id="btnRiver">
+                💧 Sungai
+            </button>
+            <button class="location-btn locked" onclick="unlockLocation('swamp')" id="btnSwamp">
+                🔒 🪷 Rawa <span style="color: #ffd700;">50,000 🪙</span>
+            </button>
+            <button class="location-btn locked" onclick="unlockLocation('lake')" id="btnLake">
+                🔒 🛶 Danau <span style="color: #ffd700;">100,000 🪙</span>
+            </button>
+            <button class="location-btn locked" onclick="unlockLocation('volcano')" id="btnVolcano">
+                🔒 🌋 Kawah <span style="color: #ffd700;">500,000 🪙</span>
+            </button>
+            <button class="location-btn locked" onclick="unlockLocation('forest')" id="btnForest">
+                🔒 🌲 Hutan <span style="color: #ffd700;">1,000,000 🪙</span>
+            </button>
+            <button class="location-btn locked" onclick="unlockLocation('ocean')" id="btnOcean">
+                🔒 🌊 Laut <span style="color: #ffd700;">5,000,000 🪙</span>
+            </button>
+            <button class="location-btn locked" onclick="unlockLocation('atlantis')" id="btnAtlantis">
+                🔒 🏛️ Atlantis <span style="color: #ffd700;">20,000,000 🪙</span>
+            </button>
+            <button class="location-btn locked" onclick="unlockLocation('kitchen')" id="btnKitchen">
+                🔒 🍳 Dapur <span style="color: #ffd700;">500,000 🪙</span>
+            </button>
+        </div>
+
+        <!-- Active Boosters -->
+        <div class="active-boosters" id="activeBoosters"></div>
+        
+        <!-- Inventory -->
+        <div class="inventory">
+            <h3 style="text-align: center; margin-bottom: 15px;">Inventory</h3>
+            <div class="inventory-items" id="inventoryItems">
+                <div style="text-align: center; width: 100%; opacity: 0.7;">
+                    Belum ada ikan yang ditangkap!
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <!-- Fish Index Modal -->
+        <div class="admin-modal" id="fishIndexModal" style="display: none;">
+            <div class="fish-list-content">
+                <h2 style="text-align: center; margin-bottom: 20px; color: #ffd700;">📋 CATATAN IKAN</h2>
+                <div id="fishIndexContainer"></div>
+                <div style="text-align: center; margin-top: 20px;">
+                    <button class="control-btn" onclick="closeFishIndex()">Tutup</button>
+                </div>
+            </div>
+        </div>
+
+
+    <div class="game-management">
+        <div class="management-buttons">
+            <button class="management-btn" onclick="manualSave()" title="Simpan progres game">
+                💾 Save Game
+            </button>
+            <button class="management-btn" onclick="manualLoad()" title="Muat progres sebelumnya">
+                📂 Load Game
+            </button>
+            <button class="management-btn" onclick="exportData()" title="Export data ke file JSON">
+                ⬆️ Export Data
+            </button>
+            <button class="management-btn" onclick="importData()" title="Import data dari file JSON">
+                ⬇️ Import Data
+            </button>
+            <button class="management-btn reset-btn" onclick="resetGame()" title="Hapus semua progres dan mulai ulang?">
+                🧹 Reset Data
+            </button>
+        </div>
+        <div class="save-status" id="saveStatus">
+            💾 Auto-save aktif
+        </div>
+    </div>
+
+        <!-- Shop Modal -->
+        <div class="shop-modal" id="shopModal">
+            <div class="shop-content">
+                <h2 style="text-align: center; margin-bottom: 20px; color: #ffd700;">Toko</h2>
+                
+                <div class="shop-category">
+                    <h3>🪝 Pancingan</h3>
+                    <div class="shop-items-grid">
+                        <button 
+                            class="shop-item owned" 
+                            data-item-id="rod1" 
+                            onclick="buyItem('rod1')" 
+                            style="cursor: not-allowed;"
+                        >
+                            <span class="item-rarity rarity-common">Common</span>
+                            Pancingan Bambu
+                            <span class="owned-badge">✓ Sudah Punya</span>
+                            <div class="item-stats">Kecepatan: 1x | Luck: +0%</div>
+                        </button>
+                        
+                        <button class="shop-item" onclick="buyItem('rod2')">
+                            <span class="item-rarity rarity-uncommon">Uncommon</span>
+                            Pancingan Kayu
+                            <span class="item-price">20,000 🪙</span>
+                            <div class="item-stats">Kecepatan: 1.5x | Luck: +10%</div>
+                        </button>
+                        
+                        <button class="shop-item" onclick="buyItem('rod3')">
+                            <span class="item-rarity rarity-rare">Rare</span>
+                            Pancingan Besi
+                            <span class="item-price">50,000 🪙</span>
+                            <div class="item-stats">Kecepatan: 2x | Luck: +25%</div>
+                        </button>
+                        
+                        <button class="shop-item" onclick="buyItem('rod4')">
+                            <span class="item-rarity rarity-epic">Epic</span>
+                            Pancingan Emas
+                            <span class="item-price">100,000 🪙</span>
+                            <div class="item-stats">Kecepatan: 2.5x | Luck: +50%</div>
+                        </button>
+                        
+                        <button class="shop-item" onclick="buyItem('rod5')">
+                            <span class="item-rarity rarity-mythic">Mythic</span>
+                            Pancingan Obsidian
+                            <span class="item-price">300,000 🪙</span>
+                            <div class="item-stats">Kecepatan: 3x | Luck: +100%</div>
+                        </button>
+                        
+                        <button class="shop-item" onclick="buyItem('rod6')">
+                            <span class="item-rarity rarity-secret">Secret</span>
+                            Pancingan Berlian
+                            <span class="item-price">1,000,000 🪙</span>
+                            <div class="item-stats">Kecepatan: 3.5x | Luck: +200%</div>
+                        </button>
+                        <button class="shop-item" onclick="buyItem('rod7')">
+                            <span class="item-rarity rarity-divine">Divine</span>
+                            Pancingan Berlian Merah
+                            <span class="item-price">10,000,000 🪙</span>
+                            <div class="item-stats">Kecepatan: 4x | Luck: +500%</div>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="shop-category">
+                    <h3>🪱 Umpan</h3>
+                    <div class="shop-items-grid">
+                        <button class="shop-item" data-item-id="bait1" onclick="buyItem('bait1')">
+                        <span class="item-rarity rarity-common">Common</span>
+                        🪱 Cacing
+                        <span class="item-price">50,000 🪙</span>
+                        <div class="item-stats">+50% Luck</div>
+                        </button>
+                        <button class="shop-item" data-item-id="bait2" onclick="buyItem('bait2')">
+                        <span class="item-rarity rarity-uncommon">Uncommon</span>
+                        🦐 Udang
+                        <span class="item-price">80,000 🪙</span>
+                        <div class="item-stats">+80% Luck</div>
+                        </button>
+                        <button class="shop-item" data-item-id="bait3" onclick="buyItem('bait3')">
+                        <span class="item-rarity rarity-rare">Rare</span>
+                        🐟 Kembung
+                        <span class="item-price">100,000 🪙</span>
+                        <div class="item-stats">+100% Luck</div>
+                        </button>
+                        <button class="shop-item" data-item-id="bait4" onclick="buyItem('bait4')">
+                        <span class="item-rarity rarity-epic">Epic</span>
+                        🦀 Kepiting
+                        <span class="item-price">500,000 🪙</span>
+                        <div class="item-stats">+150% Luck</div>
+                        </button>
+                        <button class="shop-item" data-item-id="bait5" onclick="buyItem('bait5')">
+                        <span class="item-rarity rarity-mythic">Mythic</span>
+                        🦑 Cumi
+                        <span class="item-price">800,000 🪙</span>
+                        <div class="item-stats">+200% Luck</div>
+                        </button>
+                        <button class="shop-item" data-item-id="bait6" onclick="buyItem('bait6')">
+                        <span class="item-rarity rarity-secret">Secret</span>
+                        🍖 Daging
+                        <span class="item-price">1,200,000 🪙</span>
+                        <div class="item-stats">+300% Luck</div>
+                        </button>
+                        <button class="shop-item" data-item-id="bait7" onclick="buyItem('bait7')">
+                        <span class="item-rarity rarity-divine">Divine</span>
+                        🔴 Pelet Ajaib
+                        <span class="item-price">5,000,000 🪙</span>
+                        <div class="item-stats">+500% Luck</div>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="shop-category">
+                    <div class="shop-category">
+                        <h3>⚡ Booster</h3>
+                        <p class="booster-warning">
+                            ⚠️ Booster Gabisa Di Stack 1 Jenis Kalau Beli Yang Lama Akan Hilang ⚠️
+                        </p>
+                        <div class="shop-items-grid">
+                        <button class="shop-item" onclick="buyItem('speed1')">
+                            🌀 Pashen
+                            <span class="item-price">5,000 🪙</span>
+                            <div class="item-stats">2x Kecepatan Menarik (5 menit)</div>
+                        </button>
+                        <button class="shop-item" onclick="buyItem('luck1')">
+                            🍀 Jimat
+                            <span class="item-price">5,000 🪙</span>
+                            <div class="item-stats">x2 Luck (5 menit)</div>
+                        </button>
+                        <button class="shop-item" onclick="buyItem('speed2')">
+                            🌀 Pashen II
+                            <span class="item-price">10,000 🪙</span>
+                            <div class="item-stats">3x Kecepatan Menarik (5 menit)</div>
+                        </button>
+                        <button class="shop-item" onclick="buyItem('luck2')">
+                            🍀 Jimat II
+                            <span class="item-price">10,000 🪙</span>
+                            <div class="item-stats">x3 Luck (5 menit)</div>
+                        </button>
+                        <button class="shop-item" onclick="buyItem('speed3')">
+                            🌀 Pashen III
+                            <span class="item-price">20,000 🪙</span>
+                            <div class="item-stats">4x Kecepatan Menarik (5 menit)</div>
+                        </button>
+                        <button class="shop-item" onclick="buyItem('luck3')">
+                            🍀 Jimat III
+                            <span class="item-price">20,000 🪙</span>
+                            <div class="item-stats">x5 Luck (5 menit)</div>
+                        </button>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 20px;">
+                    <button class="control-btn" onclick="closeShop()">Tutup</button>
+                </div>
+            </div>
+        </div>
+    
+    <script src="script.js"></script>
+    <script>
+    // Update System - Manual Check Only
+    class GameUpdater {
+        constructor() {
+            this.lastUpdateCheck = 0;
+            this.updateCheckInterval = 300000; // 5 menit
+            this.init();
+        }
+    
+        init() {
+            // Check for updates setiap 5 menit, tapi hanya jika game tidak sedang aktif memancing
+            setInterval(() => this.safeUpdateCheck(), this.updateCheckInterval);
+            
+            // Juga check ketika tab menjadi visible (user kembali ke game)
+            document.addEventListener('visibilitychange', () => {
+                if (!document.hidden) this.safeUpdateCheck();
+            });
+        }
+    
+        safeUpdateCheck() {
+            // Jangan check update jika sedang auto fishing
+            if (window.isAutoFishing) {
+                console.log('🔄 Skip update check: Auto fishing aktif');
+                return;
+            }
+            
+            // Jangan check terlalu sering
+            const now = Date.now();
+            if (now - this.lastUpdateCheck < 60000) { // Minimal 1 menit antara check
+                return;
+            }
+            
+            this.lastUpdateCheck = now;
+            this.checkForUpdates();
+        }
+    
+        async checkForUpdates() {
+            try {
+                console.log('🔍 Checking for updates...');
+                const response = await fetch(`/?v=${Date.now()}`);
+                const html = await response.text();
+                
+                // Simple check: jika response berbeda dari current page
+                const currentScripts = Array.from(document.querySelectorAll('script[src]'))
+                    .map(script => script.src).sort();
+                
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const newScripts = Array.from(doc.querySelectorAll('script[src]'))
+                    .map(script => script.src).sort();
+                
+                // Check jika ada perubahan script
+                const scriptsChanged = JSON.stringify(currentScripts) !== JSON.stringify(newScripts);
+                
+                if (scriptsChanged) {
+                    console.log('🔄 Update detected!');
+                    this.showUpdateNotification();
+                } else {
+                    console.log('✅ No updates found');
+                }
+                
+            } catch (error) {
+                console.log('❌ Update check failed:', error);
+            }
+        }
+    
+        showUpdateNotification() {
+            // Create non-intrusive notification di pojok
+            const notification = document.createElement('div');
+            notification.innerHTML = `
+                <div style="
+                    position: fixed;
+                    bottom: 20px;
+                    right: 20px;
+                    background: linear-gradient(145deg, #4ecdc4, #44a08d);
+                    color: white;
+                    padding: 12px 16px;
+                    border-radius: 10px;
+                    border: 2px solid #ffd700;
+                    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+                    z-index: 9999;
+                    max-width: 280px;
+                    font-size: 0.9rem;
+                    animation: slideUp 0.5s ease-out;
+                ">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px;">
+                        <span style="font-size: 1.2rem;">🔄</span>
+                        <strong>Update Tersedia!</strong>
+                    </div>
+                    <p style="margin: 5px 0; font-size: 0.8rem; opacity: 0.9;">
+                        Versi baru sudah siap. Reload game untuk mendapatkan fitur terbaru.
+                    </p>
+                    <div style="display: flex; gap: 8px; margin-top: 8px;">
+                        <button onclick="window.updateManager.reloadGame()" style="
+                            background: #ffd700; 
+                            border: none; 
+                            padding: 6px 12px; 
+                            border-radius: 5px; 
+                            cursor: pointer;
+                            font-size: 0.8rem;
+                            font-weight: bold;
+                            color: #333;
+                            flex: 1;
+                        ">Reload Sekarang</button>
+                        <button onclick="this.parentElement.parentElement.remove()" style="
+                            background: rgba(255,255,255,0.2); 
+                            border: 1px solid white; 
+                            color: white;
+                            padding: 6px 12px; 
+                            border-radius: 5px; 
+                            cursor: pointer;
+                            font-size: 0.8rem;
+                            flex: 1;
+                        ">Nanti</button>
+                    </div>
+                </div>
+                <style>
+                    @keyframes slideUp {
+                        from { 
+                            transform: translateY(100px); 
+                            opacity: 0; 
+                        }
+                        to { 
+                            transform: translateY(0); 
+                            opacity: 1; 
+                        }
+                    }
+                </style>
+            `;
+            
+            // Hapus notifikasi sebelumnya jika ada
+            const existingNotification = document.querySelector('div[style*="position: fixed"][style*="bottom: 20px"]');
+            if (existingNotification) {
+                existingNotification.remove();
+            }
+            
+            document.body.appendChild(notification);
+            
+            // Auto remove setelah 30 detik
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 30000);
+        }
+    
+        reloadGame() {
+            // Save game sebelum reload
+            if (window.saveGame) {
+                window.saveGame();
+                console.log('💾 Game saved before reload');
+            }
+            
+            // Beri jeda sebentar untuk memastikan save selesai
+            setTimeout(() => {
+                // Force reload tanpa cache
+                window.location.reload();
+            }, 500);
+        }
+    }
+    
+    // Initialize update manager
+    window.updateManager = new GameUpdater();
+    
+    // Tambahkan juga manual check function untuk dipanggil setelah deploy
+    window.checkForGameUpdates = function() {
+        window.updateManager.checkForUpdates();
+    };
+    
+    console.log('🔄 Update system initialized - Manual notifications only');
+    </script>
+
+</body>
+
+</html>
