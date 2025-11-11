@@ -2416,3 +2416,98 @@
         .fish-list-content > .fish-index-section {
             padding-bottom: 12px;
         }
+
+        /* ===========================
+        📱 MOBILE RESPONSIVE FIX
+        =========================== */
+        @media screen and (max-width: 768px) {
+        body {
+            zoom: 1;
+            overflow-x: hidden;
+        }
+
+        .game-container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 8px;
+            border-radius: 0;
+        }
+
+        .game-header {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 10px;
+        }
+
+        .player-level-container {
+            width: 100%;
+            padding: 10px;
+        }
+
+        .stats {
+            flex-direction: column;
+            gap: 5px;
+            width: 100%;
+        }
+
+        .stats > div {
+            width: 100%;
+            text-align: center;
+        }
+
+        .inventory,
+        .result-display {
+            width: 100%;
+            padding: 8px;
+            font-size: 0.9rem;
+        }
+
+        .game-world {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 1 / 1;
+            overflow: hidden;
+        }
+
+        .shop-item,
+        .inventory-item {
+            flex: 1 1 45%;
+            max-width: 45%;
+            font-size: 0.8rem;
+        }
+
+        .info-update-content {
+            width: 90%;
+            padding: 12px;
+        }
+
+        .update-text {
+            font-size: 0.85rem;
+        }
+
+        /* Tombol besar agar mudah ditekan */
+        button,
+        .btn {
+            min-height: 40px;
+            font-size: 1rem;
+        }
+        }
+
+        /* Untuk layar HP kecil banget (misal 360px) */
+        @media screen and (max-width: 420px) {
+        .stats > div {
+            font-size: 0.8rem;
+        }
+
+        .game-world {
+            aspect-ratio: 1 / 1.2;
+        }
+
+        .shop-item,
+        .inventory-item {
+            max-width: 100%;
+            flex: 1 1 100%;
+        }
+        }
+
