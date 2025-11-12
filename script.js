@@ -890,14 +890,14 @@
 
             // 🎯 Peluang dasar di 0% luck
             const baseChance = {
-                divine: 0.000001,
-                secret: 0.00001,   // 1 / 10,000,000
-                mythic: 0.0001,    // 1 / 1,000,000
-                epic: 0.5,         // 1 / 10,000
-                rare: 1.0,         // 1 / 200
-                uncommon: 10.0,     // 1 / 12.5
-                common: 70.0,      // 1 / ~1.4
-                junk: 21.48995     // 1 / 5
+                divine: 0.00001,
+                secret: 0.0001,
+                mythic: 0.001,
+                epic: 0.5,
+                rare: 1.0,
+                uncommon: 10.0,
+                common: 70.0,
+                junk: 21.48995
             };
 
             // 🧮 Total luck (rod + bait + booster)
