@@ -890,8 +890,8 @@
 
             // 🎯 Peluang dasar di 0% luck
             const baseChance = {
-                divine: 0.00001,
-                secret: 0.0001,
+                divine: 0.0001,
+                secret: 0.0005,
                 mythic: 0.005,
                 epic: 0.5,
                 rare: 1.0,
@@ -2114,4 +2114,5 @@
                 window.updateManager.checkForUpdates();
             }
         }
+
 
