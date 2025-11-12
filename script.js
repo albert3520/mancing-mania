@@ -892,7 +892,7 @@
             const baseChance = {
                 divine: 0.00001,
                 secret: 0.0001,
-                mythic: 0.001,
+                mythic: 0.005,
                 epic: 0.5,
                 rare: 1.0,
                 uncommon: 10.0,
@@ -911,19 +911,19 @@
             // ⚙️ Bonus multiplier per rarity per level
             const luckBonus = {
                 divine: 0.05,
-                secret: 0.10,     // +10% per level
-                mythic: 0.15,     // +15% per level
-                epic: 0.20,       // +20% per level
-                rare: 0.25,       // +25% per level
-                uncommon: 0.10,   // +10% per level
-                common: -0.10,    // -10% per level
-                junk: -0.20       // -20% per level
+                secret: 0.10,
+                mythic: 0.15,
+                epic: 0.20,
+                rare: 0.25,
+                uncommon: 0.10,
+                common: -0.10,
+                junk: -0.20
             };
 
             // ⚙️ Floor minimum agar Common & Junk tidak hilang sepenuhnya
             const minChanceFloor = {
-                common: 5.0,
-                junk: 5.0
+                common: 3.0,
+                junk: 1.0
             };
 
             // 🧩 Hitung effectiveLevel dengan softcap (efek luck makin lemah di atas 500%)
