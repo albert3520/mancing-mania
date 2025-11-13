@@ -2228,7 +2228,51 @@
             alert("✅ Data berhasil diexport!");
         }
 
-        // Import data dari file JSON
+        // Buat hash SHA-256 dari data (untuk verifikasi integritas)
+        async function generateHash(data) {
+            const msgUint8 = new TextEncoder().encode(JSON.stringify(data));
+            const hashBuffer = await crypto.subtle.digest("SHA-256", msgUint8);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+        }
+
+        // Export data ke file JSON dengan hash tanda tangan
+        async function exportData() {
+            try {
+                // Ambil semua data yang perlu disimpan
+                const saveData = JSON.parse(localStorage.getItem("mancing_mania_save") || "{}");
+                const usedCodes = JSON.parse(localStorage.getItem("used_codes") || "[]");
+
+                // Gabungkan menjadi satu objek
+                const fullData = {
+                    save: saveData,
+                    used_codes: usedCodes
+                };
+
+                // Buat hash digital
+                const hash = await generateHash(fullData);
+
+                // Buat file JSON berisi data + hash
+                const exportObj = {
+                    data: fullData,
+                    signature: hash
+                };
+
+                // Simpan ke file
+                const blob = new Blob([JSON.stringify(exportObj)], { type: "application/json" });
+                const a = document.createElement("a");
+                a.href = URL.createObjectURL(blob);
+                a.download = "mancing_save_secure.json";
+                a.click();
+
+                alert("✅ Data berhasil diekspor dengan tanda tangan digital!");
+            } catch (err) {
+                console.error("❌ Gagal mengekspor data:", err);
+                alert("Terjadi kesalahan saat mengekspor data!");
+            }
+        }
+
+        // Import data dari file JSON, verifikasi hash sebelum diterima
         function importData() {
             const input = document.createElement("input");
             input.type = "file";
@@ -2239,14 +2283,35 @@
                 if (!file) return;
 
                 const reader = new FileReader();
-                reader.onload = event => {
+                reader.onload = async ev => {
                     try {
-                        const json = JSON.parse(event.target.result);
-                        localStorage.setItem("mancing_mania_save", JSON.stringify(json));
-                        alert("✅ Data berhasil diimport! Muat ulang game untuk menerapkan perubahan.");
+                        const parsed = JSON.parse(ev.target.result);
+
+                        // Pastikan format file benar
+                        if (!parsed.data || !parsed.signature) {
+                            alert("❌ File tidak valid atau tidak memiliki tanda tangan digital!");
+                            return;
+                        }
+
+                        // Verifikasi hash
+                        const computedHash = await generateHash(parsed.data);
+                        if (computedHash !== parsed.signature) {
+                            alert("❌ File save sudah dimodifikasi! Import dibatalkan.");
+                            console.warn("Expected:", parsed.signature, "Got:", computedHash);
+                            return;
+                        }
+
+                        // Jika valid → simpan data
+                        const { save, used_codes } = parsed.data;
+
+                        localStorage.setItem("mancing_mania_save", JSON.stringify(save));
+                        localStorage.setItem("used_codes", JSON.stringify(used_codes));
+
+                        alert("✅ File valid dan berhasil diimport!");
                         location.reload();
-                    } catch {
-                        alert("❌ Gagal membaca file. Pastikan file JSON valid.");
+                    } catch (err) {
+                        console.error("❌ Gagal mengimpor data:", err);
+                        alert("File tidak valid atau rusak!");
                     }
                 };
                 reader.readAsText(file);
