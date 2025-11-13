@@ -54,6 +54,202 @@
             }
         }
 
+        // ======== SETTINGS / TUKAR KODE (FIXED) ======== //
+        document.addEventListener("DOMContentLoaded", () => {
+            const settingsBtn = document.getElementById("settingsButton");
+            if (settingsBtn) settingsBtn.addEventListener("click", openSettingsModal);
+        });
+
+        function openSettingsModal() {
+            if (document.querySelector(".settings-modal")) return;
+            const modal = document.createElement("div");
+            modal.className = "settings-modal";
+            modal.innerHTML = `
+                <div class="settings-content">
+                    <h2>⚙️ Pengaturan</h2>
+                    <div class="settings-option">
+                        <button class="settings-btn-action" id="openRedeemBtn">🎁 Tukar Kode</button>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <button class="close-info-btn" id="closeSettingsBtn">Tutup</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            document.getElementById("openRedeemBtn").addEventListener("click", openCodeRedeemModal);
+            document.getElementById("closeSettingsBtn").addEventListener("click", closeSettingsModal);
+        }
+
+        function closeSettingsModal() {
+            document.querySelector(".settings-modal")?.remove();
+        }
+
+        function openCodeRedeemModal() {
+            closeSettingsModal();
+            // prevent duplicates
+            if (document.querySelector(".settings-modal")) return;
+
+            const modal = document.createElement("div");
+            modal.className = "settings-modal";
+            modal.innerHTML = `
+                <div class="settings-content">
+                    <input id="codeInput" class="settings-input" placeholder="Masukkan kode..." />
+                    <div style="margin-top:10px;">
+                        <button class="settings-btn-action" id="redeemCodeBtn">Tukar</button>
+                    </div>
+                    <div style="margin-top:15px;">
+                        <button class="close-info-btn" id="closeRedeemBtn">Tutup</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            document.getElementById("redeemCodeBtn").addEventListener("click", redeemCode);
+            document.getElementById("closeRedeemBtn").addEventListener("click", closeSettingsModal);
+
+            // allow Enter key to submit
+            const input = document.getElementById("codeInput");
+            input.addEventListener("keydown", (e) => {
+                if (e.key === "Enter") redeemCode();
+            });
+        }
+
+        function redeemCode() {
+            try {
+                const input = document.getElementById("codeInput");
+                if (!input) { console.error("Input kode tidak ditemukan"); alert("Terjadi kesalahan. Coba lagi."); return; }
+
+                const raw = input.value || "";
+                const code = raw.trim().toUpperCase();
+                if (!code) {
+                    alert("Masukkan kode terlebih dahulu.");
+                    return;
+                }
+
+                // ambil used codes, simpan selalu uppercase agar konsisten
+                const usedCodesRaw = localStorage.getItem("used_codes") || "[]";
+                let usedCodes;
+                try {
+                    usedCodes = JSON.parse(usedCodesRaw);
+                    if (!Array.isArray(usedCodes)) usedCodes = [];
+                } catch (err) {
+                    usedCodes = [];
+                }
+                usedCodes = usedCodes.map(c => (typeof c === "string" ? c.toUpperCase() : c)).filter(Boolean);
+
+                if (usedCodes.includes(code)) {
+                    alert("❌ Kode ini sudah pernah digunakan pada save ini.");
+                    return;
+                }
+
+                // proses kode
+                let gaveReward = false;
+                if (code === "AKUMAUSECRET") {
+                    const success = giveKrakenReward();
+                    if (success) {
+                        alert("Ciee Dapet Kraken!");
+                        gaveReward = true;
+                    } else {
+                        alert("⚠️ Gagal menambahkan ikan: tidak ditemukan ikan 'secret' di data atau terjadi kesalahan.");
+                        console.warn("AKUMAUSECRET: tidak ada ikan secret atau error.");
+                        // jangan tandai kode sebagai terpakai jika gagal
+                        gaveReward = false;
+                    }
+                } else if (code === "PLUSKOIN") {
+                    // Pastikan variable gold ada
+                    if (typeof gold === "number") {
+                        gold += 100000;
+                        updateUI();
+                        alert("💰 Kamu mendapatkan 100.000 koin!");
+                        gaveReward = true;
+                    } else {
+                        alert("⚠️ Gagal menambahkan koin (variabel gold tidak ditemukan).");
+                        console.error("redeemCode: gold undefined");
+                    }
+                } else {
+                    alert("⚠️ Kode tidak valid.");
+                    return;
+                }
+
+                if (gaveReward) {
+                    // simpan kode sebagai sudah dipakai (uppercase)
+                    usedCodes.push(code);
+                    localStorage.setItem("used_codes", JSON.stringify(usedCodes));
+
+                    // simpan progres jika fungsi manualSave ada
+                    try {
+                        if (typeof manualSave === "function") manualSave();
+                    } catch (err) {
+                        console.warn("manualSave() error or not available:", err);
+                    }
+
+                    // tutup modal
+                    closeSettingsModal();
+                }
+            } catch (err) {
+                console.error("redeemCode error:", err);
+                alert("Terjadi kesalahan saat menukarkan kode. Cek console untuk detail.");
+            }
+        }
+
+        // === Versi fix total: langsung beri 1 Kraken dan tampilkan ke layar ===
+        function giveKrakenReward() {
+            try {
+                const fishName = "Kraken";
+
+                // cari data ikan Kraken dari fishData
+                let krakenData = null;
+                for (const locKey in fishData) {
+                    const found = fishData[locKey].fish.find(f => f.name === fishName);
+                    if (found) {
+                        krakenData = found;
+                        break;
+                    }
+                }
+
+                if (!krakenData) {
+                    alert("❌ Tidak ditemukan data ikan Kraken di fishData!");
+                    return false;
+                }
+
+                // pastikan inventory ada
+                if (typeof inventory !== "object" || inventory === null) {
+                    window.inventory = {};
+                }
+
+                // tambahkan ke inventory
+                if (!inventory[fishName]) {
+                    inventory[fishName] = { ...krakenData, count: 1 };
+                } else {
+                    inventory[fishName].count++;
+                }
+
+                // 🔥 pastikan ikan ini juga tercatat di daftar ikan yang ditemukan
+                if (typeof discoveredFish !== "object" || discoveredFish === null) {
+                    window.discoveredFish = {};
+                }
+                if (!discoveredFish[fishName]) {
+                    discoveredFish[fishName] = krakenData;
+                    console.log(`📘 Ikan baru ditemukan: ${fishName}`);
+                }
+
+                // update tampilan & simpan ke localStorage
+                if (typeof updateInventoryDisplay === "function") updateInventoryDisplay();
+
+                localStorage.setItem("mancing_mania_save", JSON.stringify({
+                    inventory: inventory,
+                    discoveredFish: discoveredFish
+                }));
+                console.log("✅ Kraken ditambahkan ke inventory & discoveredFish:", inventory[fishName]);
+                return true;
+            } catch (err) {
+                console.error("❌ Error giveKrakenReward:", err);
+                alert("⚠️ Terjadi kesalahan saat menambahkan Kraken.");
+                return false;
+            }
+        }
+
         // ==================== FITUR BARU: INFO UPDATE (Statis, hanya developer ubah di kode) ==================== //
         document.addEventListener("DOMContentLoaded", () => {
             const header = document.querySelector(".game-header");
@@ -2062,10 +2258,15 @@
         // Reset seluruh data game
         function resetGame() {
             if (confirm("⚠️ Semua progres akan hilang! Yakin ingin reset data?")) {
+                // Hapus semua data penyimpanan game utama
                 localStorage.removeItem("mancing_mania_save");
                 localStorage.removeItem("game_version");
-                localStorage.removeItem("discoveredFish");
-                alert("Data berhasil dihapus Game akan dimulai ulang");
+                localStorage.removeItem("discoveredfish");
+
+                // 🔥 Tambahan baru: hapus juga data kode yang pernah dipakai
+                localStorage.removeItem("used_codes");
+
+                alert("✅ Data berhasil dihapus. Game akan dimulai ulang.");
                 location.reload();
             }
         }
@@ -2114,5 +2315,4 @@
                 window.updateManager.checkForUpdates();
             }
         }
-
 
