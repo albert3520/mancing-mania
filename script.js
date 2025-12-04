@@ -139,7 +139,7 @@
                 usedCodes = usedCodes.map(c => (typeof c === "string" ? c.toUpperCase() : c)).filter(Boolean);
 
                 if (usedCodes.includes(code)) {
-                    alert("❌ Kode ini sudah pernah digunakan pada save ini.");
+                    alert("❌ Kode sudah pernah digunakan!");
                     return;
                 }
 
@@ -700,6 +700,7 @@
             updateInventoryDisplay();
             updateActiveBoosters();
             updateShopDisplay();
+            updateLevelUpButton();
         }
         
         // Update UI - TAMBAHKAN LUCK STAT
@@ -744,6 +745,7 @@
                 rodElement.className = 'fishing-rod ' + currentRod;
                 console.log('🎣 Rod visual updated to:', currentRod);
             }
+            updateLevelUpButton();
         }
 
         function gainExp(amount) {
@@ -777,6 +779,59 @@
             expProgress.style.width = percent + '%';
             expText.textContent = `${playerExp} / ${playerExpCap}`;
             playerLevelEl.textContent = playerLevel;
+        }
+
+        function buyLevelUp() {
+            const cost = 5000000; // 5 juta koin
+            
+            if (playerLevel >= maxLevel) {
+                resultElement.textContent = "❌ Sudah mencapai level maksimum!";
+                return;
+            }
+            
+            if (gold < cost) {
+                resultElement.textContent = `❌ Koin tidak cukup! Butuh ${cost.toLocaleString()} 🪙`;
+                return;
+            }
+            
+            // Kurangi koin
+            gold -= cost;
+            
+            // Naikkan level
+            playerLevel++;
+            permanentLuckBonus += 2; // +2% luck per level
+            
+            // Reset exp untuk level berikutnya
+            playerExp = 0;
+            playerExpCap += 30; // Tambah exp cap untuk level berikutnya
+            
+            // Update UI
+            updateUI();
+            updateExpBar();
+            
+            // Tampilkan hasil
+            resultElement.innerHTML = `Naik ke Level ${playerLevel}!`;
+            
+            // Simpan game
+            saveGame();
+        }
+
+        // Tambahkan juga update tampilan tombol berdasarkan kondisi:
+        function updateLevelUpButton() {
+            const button = document.querySelector('.level-up-btn');
+            if (!button) return;
+            
+            const canAfford = gold >= 5000000;
+            const canLevelUp = playerLevel < maxLevel;
+            
+            button.disabled = !canAfford || !canLevelUp;
+            
+            // Update tooltip
+            if (!canLevelUp) {
+                button.title = "Sudah mencapai level maksimum!";
+            } else if (!canAfford) {
+                button.title = `Butuh 5.000.000 🪙 (Kamu punya ${gold.toLocaleString()} 🪙)`;
+            }
         }
 
         function updateLocationBackground() {
@@ -1342,6 +1397,7 @@
             updateInventoryDisplay();
             
             resultElement.innerHTML = `Menjual ${fishCount} Ikan Seharga <span style="color:#ffd700; font-weight:bold;">${totalValue.toLocaleString()} 🪙</span>`;
+            updateLevelUpButton();
         }
         
         function sellOneFish(fishName) {
@@ -1357,6 +1413,7 @@
 
             updateInventoryDisplay();
             updateUI();
+            updateLevelUpButton();
 
         // 🎨 Pilih warna sesuai rarity
         const rarityColors = {
@@ -1792,6 +1849,7 @@
             updateUI();
             updateActiveBoosters();
             closeShop();
+            updateLevelUpButton();
         }
         
         // Simpan data ikan yang sudah pernah ditangkap
@@ -1928,6 +1986,7 @@
             } else {
                 alert("Masukkan jumlah Coin yang valid!");
             }
+            updateLevelUpButton();
         }
 
         // Fish Selector Functions
