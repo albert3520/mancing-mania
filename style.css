@@ -2600,3 +2600,39 @@
             transform: scale(1.05);
             background: linear-gradient(145deg, #5fe0d3, #55bfa4);
         }
+
+        .level-up-btn {
+            margin-top: 10px;
+            background: linear-gradient(145deg, #ffd700, #ffae00);
+            border: 2px solid #fff3;
+            color: #222;
+            font-weight: bold;
+            padding: 8px 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+            min-width: 160px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .level-up-btn:hover:not(:disabled) {
+            background: linear-gradient(145deg, #fff46b, #ffd700);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+
+        .level-up-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Responsive adjustment untuk tombol level up */
+        @media screen and (max-width: 768px) {
+            .level-up-btn {
+                font-size: 0.8rem;
+                padding: 6px 10px;
+                min-width: 140px;
+            }
+        }
