@@ -295,6 +295,20 @@
         </div>
     </div>
 
+<!-- ===================== FOOTER ===================== -->
+<div class="footer">
+    <div class="footer-content">
+        <p class="footer-text">
+            &copy; 2025 Mancing Mania. All rights reserved.
+        </p>
+        <p class="footer-creator">
+            Created by ELB
+        </p>
+    </div>
+</div>
+<!-- ================================================== -->
+
+
         <!-- Shop Modal -->
         <div class="shop-modal" id="shopModal">
             <div class="shop-content">
@@ -451,180 +465,7 @@
                 </div>
             </div>
         </div>
-    
+
     <script src="script.js"></script>
-    <script>
-    // Update System - Manual Check Only
-    class GameUpdater {
-        constructor() {
-            this.lastUpdateCheck = 0;
-            this.updateCheckInterval = 300000; // 5 menit
-            this.init();
-        }
-    
-        init() {
-            // Check for updates setiap 5 menit, tapi hanya jika game tidak sedang aktif memancing
-            setInterval(() => this.safeUpdateCheck(), this.updateCheckInterval);
-            
-            // Juga check ketika tab menjadi visible (user kembali ke game)
-            document.addEventListener('visibilitychange', () => {
-                if (!document.hidden) this.safeUpdateCheck();
-            });
-        }
-    
-        safeUpdateCheck() {
-            // Jangan check update jika sedang auto fishing
-            if (window.isAutoFishing) {
-                console.log('🔄 Skip update check: Auto fishing aktif');
-                return;
-            }
-            
-            // Jangan check terlalu sering
-            const now = Date.now();
-            if (now - this.lastUpdateCheck < 60000) { // Minimal 1 menit antara check
-                return;
-            }
-            
-            this.lastUpdateCheck = now;
-            this.checkForUpdates();
-        }
-    
-        async checkForUpdates() {
-            try {
-                console.log('🔍 Checking for updates...');
-                const response = await fetch(`/?v=${Date.now()}`);
-                const html = await response.text();
-                
-                // Simple check: jika response berbeda dari current page
-                const currentScripts = Array.from(document.querySelectorAll('script[src]'))
-                    .map(script => script.src).sort();
-                
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-                const newScripts = Array.from(doc.querySelectorAll('script[src]'))
-                    .map(script => script.src).sort();
-                
-                // Check jika ada perubahan script
-                const scriptsChanged = JSON.stringify(currentScripts) !== JSON.stringify(newScripts);
-                
-                if (scriptsChanged) {
-                    console.log('🔄 Update detected!');
-                    this.showUpdateNotification();
-                } else {
-                    console.log('✅ No updates found');
-                }
-                
-            } catch (error) {
-                console.log('❌ Update check failed:', error);
-            }
-        }
-    
-        showUpdateNotification() {
-            // Create non-intrusive notification di pojok
-            const notification = document.createElement('div');
-            notification.innerHTML = `
-                <div style="
-                    position: fixed;
-                    bottom: 20px;
-                    right: 20px;
-                    background: linear-gradient(145deg, #4ecdc4, #44a08d);
-                    color: white;
-                    padding: 12px 16px;
-                    border-radius: 10px;
-                    border: 2px solid #ffd700;
-                    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-                    z-index: 9999;
-                    max-width: 280px;
-                    font-size: 0.9rem;
-                    animation: slideUp 0.5s ease-out;
-                ">
-                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px;">
-                        <span style="font-size: 1.2rem;">🔄</span>
-                        <strong>Gaada Update Kacangin Aja!</strong>
-                    </div>
-                    <p style="margin: 5px 0; font-size: 0.8rem; opacity: 0.9;">
-                        Versi baru sudah siap. Reload game untuk mendapatkan fitur terbaru.
-                    </p>
-                    <div style="display: flex; gap: 8px; margin-top: 8px;">
-                        <button onclick="window.updateManager.reloadGame()" style="
-                            background: #ffd700; 
-                            border: none; 
-                            padding: 6px 12px; 
-                            border-radius: 5px; 
-                            cursor: pointer;
-                            font-size: 0.8rem;
-                            font-weight: bold;
-                            color: #333;
-                            flex: 1;
-                        ">Reload Sekarang</button>
-                        <button onclick="this.parentElement.parentElement.remove()" style="
-                            background: rgba(255,255,255,0.2); 
-                            border: 1px solid white; 
-                            color: white;
-                            padding: 6px 12px; 
-                            border-radius: 5px; 
-                            cursor: pointer;
-                            font-size: 0.8rem;
-                            flex: 1;
-                        ">Nanti</button>
-                    </div>
-                </div>
-                <style>
-                    @keyframes slideUp {
-                        from { 
-                            transform: translateY(100px); 
-                            opacity: 0; 
-                        }
-                        to { 
-                            transform: translateY(0); 
-                            opacity: 1; 
-                        }
-                    }
-                </style>
-            `;
-            
-            // Hapus notifikasi sebelumnya jika ada
-            const existingNotification = document.querySelector('div[style*="position: fixed"][style*="bottom: 20px"]');
-            if (existingNotification) {
-                existingNotification.remove();
-            }
-            
-            document.body.appendChild(notification);
-            
-            // Auto remove setelah 30 detik
-            setTimeout(() => {
-                if (notification.parentElement) {
-                    notification.remove();
-                }
-            }, 30000);
-        }
-    
-        reloadGame() {
-            // Save game sebelum reload
-            if (window.saveGame) {
-                window.saveGame();
-                console.log('💾 Game saved before reload');
-            }
-            
-            // Beri jeda sebentar untuk memastikan save selesai
-            setTimeout(() => {
-                // Force reload tanpa cache
-                window.location.reload();
-            }, 500);
-        }
-    }
-    
-    // Initialize update manager
-    window.updateManager = new GameUpdater();
-    
-    // Tambahkan juga manual check function untuk dipanggil setelah deploy
-    window.checkForGameUpdates = function() {
-        window.updateManager.checkForUpdates();
-    };
-    
-    console.log('🔄 Update system initialized - Manual notifications only');
-    </script>
-
 </body>
-
 </html>
